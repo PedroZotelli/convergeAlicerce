@@ -118,8 +118,8 @@ TASKSPEC_BIN="${CVG_TASKSPEC_BIN:-$(command -v taskspec 2>/dev/null || true)}"
 }
 TASKSPEC_VERSION="$("$TASKSPEC_BIN" version 2>/dev/null | tail -1 | tr -d '[:space:]')"
 case "$TASKSPEC_VERSION" in
-  3.8.*) ;;
-  *) echo "ERROR: Converge 0.2 requires taskspec 3.8.x (found '$TASKSPEC_VERSION')" >&2; exit 2 ;;
+  3.8.*|3.9.*|3.[1-9][0-9].*) ;;
+  *) echo "ERROR: Converge 0.2 requires taskspec >=3.8.0 and <4.0.0 (found '$TASKSPEC_VERSION')" >&2; exit 2 ;;
 esac
 
 if [ "$TARGET" = "$CVG_SRC" ]; then

@@ -316,7 +316,7 @@ fi
 # ----- Run the eval through the standalone Task-Spec engine -----
 TASKSPEC_ENGINE="${CVG_TASKSPEC_BIN:-${TASKSPEC_BIN:-taskspec}}"
 command -v "$TASKSPEC_ENGINE" >/dev/null 2>&1 \
-  || err "Task-Spec engine is unavailable: $TASKSPEC_ENGINE (requires taskspec 3.8.x)"
+  || err "Task-Spec engine is unavailable: $TASKSPEC_ENGINE (requires taskspec >=3.8.0 and <4.0.0)"
 EVAL_OUT=""
 EVAL_RC=0
 set +e
