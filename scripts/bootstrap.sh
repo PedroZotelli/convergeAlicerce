@@ -22,10 +22,10 @@ REPO="$(cd "$SELF_DIR/.." && pwd)"
 cd "$REPO" || { echo "cannot enter repo"; echo "BOOTSTRAP=FAIL"; exit 1; }
 
 # The release pairing. These are the same commits .github/workflows/ci.yml pins.
-TASKSPEC_REPO="https://github.com/PedroZotelli/task-specLuan.git"
+TASKSPEC_REPO="https://github.com/PedroZotelli/task-specAlicerce.git"
 TASKSPEC_COMMIT="d5121f8c870448e3864eb7cb22160f0b720d7d36"
 TASKSPEC_VERSION="3.10.0"
-SEAMWISE_REPO="https://github.com/PedroZotelli/seamwiseLuan.git"
+SEAMWISE_REPO="https://github.com/PedroZotelli/seamwiseAlicerce.git"
 SEAMWISE_COMMIT="862a90ad38a37a250af2d96c0fc2c3c2f8149519"
 SEAMWISE_VERSION="0.3.0"
 JSONSCHEMA_PIN="jsonschema==4.26.0"

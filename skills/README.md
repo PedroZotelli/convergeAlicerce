@@ -92,7 +92,7 @@ judgment.
 | 2 | **Structure** · [`tech-req-to-adrs`](tech-req-to-adrs/) | Inspect the live system, record only hard-to-reverse grounding decisions, and pin one domain vocabulary; no implementation plan leaks in. | `cvg/docs/adrs/*` + `CONTEXT.md` · `CHECK_ADR` |
 | 3 | **Decompose** · [`reqs-to-swimlane-plans`](reqs-to-swimlane-plans/) | Cut natural one-way seams, designate a steel thread, and split each lane into independently provable legs while staying above task/code altitude. | `cvg/swimlanes/<seam>/` tree · `CHECK_PLAN` |
 | 4 | **Consensus** · [`sketch-plans-adversarial-review`](sketch-plans-adversarial-review/) | A different model family tries to refute every plan; every objection is fixed or explicitly accepted with an owner and provenance. | Hardened plans + stamped objection log · `CHECK_CONSENSUS` + owner sign-off |
-| 5 | **Tasking** · [standalone `taskspec`](https://github.com/PedroZotelli/task-specLuan) | Turn accepted legs into atomic, vendor-neutral units whose runnable evals travel with the work; PRE-gate and HMAC seal prevent silent goalpost edits. | Signed Task-Spec DAG under `cvg/tasks/` · `TIER=1` for unattended execution |
+| 5 | **Tasking** · [standalone `taskspec`](https://github.com/PedroZotelli/task-specAlicerce) | Turn accepted legs into atomic, vendor-neutral units whose runnable evals travel with the work; PRE-gate and HMAC seal prevent silent goalpost edits. | Signed Task-Spec DAG under `cvg/tasks/` · `TIER=1` for unattended execution |
 | 6 | **Register** · [`task-specs-to-issues`](task-specs-to-issues/) · *opt-in* | Idempotently project one signed spec to one issue and mirror every `depends_on` edge as `blocked-by`; the spec remains canonical. | Tracker shadow + backlinks · `CHECK_REGISTER` parity |
 | 7 | **Bind** · [`task-to-runtime-contract`](task-to-runtime-contract/) | Bind one signed revision to least-privilege paths, hash-pinned evidence, honest runtime controls, adapters, and a minimal identifier-only worker brief. | `execution-profile.yaml` + guards + `AGENTS.task.md` · `CHECK_RUNTIME_CONTRACT` |
 | 8 | **The Loop** · [`task-loop`](task-loop/) | Run each attempt in fresh context, enforce iteration/time/token ceilings plus stagnation, persist checkpoints, and land in exactly one named state. | Green-eval PR/local commit or explicit handoff · `TASK_LOOP=<state>` + tier-2 `CHECK_VERIFY=<verdict>` |
@@ -201,7 +201,7 @@ metrics ledger, an L0–L2 executor conformance suite, and dispatch recipes
 (Claude, Codex, Kimi, Gemini, taskship, anthive, custom) round out the runtime.
 **Converge consumes:** the external CLI and its published contracts; it does not install a mirrored Task-Spec skill.
 **Gate:** every task carries a runnable eval — *no eval, not a task yet.*
-Full details: [Task-Spec repository](https://github.com/PedroZotelli/task-specLuan) · deep-dive PDF: [`task-spec-v0.1.pdf`](https://github.com/PedroZotelli/convergeLuan/releases/download/v0.1.0/task-spec-v0.1.pdf).
+Full details: [Task-Spec repository](https://github.com/PedroZotelli/task-specAlicerce) · deep-dive PDF: [`task-spec-v0.1.pdf`](https://github.com/PedroZotelli/convergeAlicerce/releases/download/v0.1.0/task-spec-v0.1.pdf).
 
 ### 6 · `task-specs-to-issues` — the tracker as state · **opt-in**
 

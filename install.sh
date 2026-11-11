@@ -13,7 +13,7 @@
 #
 # It also works with no checkout at all — the one-line install:
 #
-#   curl -fsSL https://raw.githubusercontent.com/PedroZotelli/convergeLuan/main/install.sh | bash
+#   curl -fsSL https://raw.githubusercontent.com/PedroZotelli/convergeAlicerce/main/install.sh | bash
 #
 # When run standalone it shallow-clones the released source to a temp dir and
 # hands off to the installer inside the clone. No TTY is assumed (a piped
@@ -61,7 +61,7 @@ usage: install.sh [--target DIR] [--copy|--symlink] [--bin-dir DIR] [--no-bin] [
 
 Examples
   # one-line install into the current repo (no checkout needed)
-  curl -fsSL https://raw.githubusercontent.com/PedroZotelli/convergeLuan/main/install.sh | bash
+  curl -fsSL https://raw.githubusercontent.com/PedroZotelli/convergeAlicerce/main/install.sh | bash
   # from a checkout
   cd ~/my-project && bash /path/to/converge/install.sh
   bash install.sh --target ~/my-project --copy
@@ -109,7 +109,7 @@ fi
 if [ ! -d "$CVG_SRC/skills" ] || [ ! -f "$CVG_SRC/bin/cvg" ]; then
   [ "$MODE" = "symlink" ] && { echo "ERROR: the one-line install is copy-only — clone the repo for a --symlink development install" >&2; exit 2; }
   command -v git >/dev/null 2>&1 || { echo "ERROR: the one-line install needs git on PATH" >&2; exit 2; }
-  REPO_URL="${CVG_REPO_URL:-https://github.com/PedroZotelli/convergeLuan.git}"
+  REPO_URL="${CVG_REPO_URL:-https://github.com/PedroZotelli/convergeAlicerce.git}"
   REF="${CVG_REF:-main}"
   echo "Converge one-line install — fetching $REPO_URL @ $REF"
   CLONE_DIR="$(mktemp -d "${TMPDIR:-/tmp}/converge-install.XXXXXX")"
@@ -129,8 +129,8 @@ TARGET="$(cd "$TARGET" && pwd)"
 TASKSPEC_BIN="${CVG_TASKSPEC_BIN:-$(command -v taskspec 2>/dev/null || true)}"
 [ -n "$TASKSPEC_BIN" ] || {
   echo "ERROR: Task-Spec engine is required. Install taskspec 3.10.x first:" >&2
-  echo "  git clone https://github.com/PedroZotelli/task-specLuan.git" >&2
-  echo "  bash task-specLuan/install.sh --global --copy" >&2
+  echo "  git clone https://github.com/PedroZotelli/task-specAlicerce.git" >&2
+  echo "  bash task-specAlicerce/install.sh --global --copy" >&2
   exit 2
 }
 TASKSPEC_VERSION="$("$TASKSPEC_BIN" version 2>/dev/null | tail -1 | tr -d '[:space:]')"
