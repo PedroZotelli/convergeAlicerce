@@ -52,6 +52,12 @@ BREW_DIR="$(dirname "$(command -v shellcheck 2>/dev/null || echo /nonexistent/x)
 # NOTE: a trailing comment starting with the word "shellcheck" is parsed as a
 # directive (SC1126), so these are phrased around it.
 PATH_OK="$BREW_DIR:$SYS_PATH"     # every required tool present
+# On Windows git (/mingw64/bin) and python3 (python.org or Microsoft Store) live
+# outside the system dirs; add theirs so "present" really means present there too.
+for tool in git python3; do
+  tool_dir="$(dirname "$(command -v "$tool" 2>/dev/null || echo /nonexistent/x)")"
+  case ":$PATH_OK:" in *":$tool_dir:"*) ;; *) PATH_OK="$PATH_OK:$tool_dir" ;; esac
+done
 
 # For a tool that DOES live in /usr/bin (python3), mirror the system dirs and omit it.
 mirror_without() { # mirror_without <dir> <tool>

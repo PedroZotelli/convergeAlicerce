@@ -84,7 +84,7 @@ def main() -> int:
         if output.exists() and output.read_text(encoding="utf-8") != rendered:
             target = output.with_name(output.stem + ".proposed" + output.suffix)
         target.parent.mkdir(parents=True, exist_ok=True)
-        target.write_text(rendered, encoding="utf-8")
+        target.write_text(rendered, encoding="utf-8", newline="\n")
         print(f"Knowledge candidate written: {relpath(target, repo)}")
         print("KNOWLEDGE_CANDIDATE=PROPOSED")
         return 0

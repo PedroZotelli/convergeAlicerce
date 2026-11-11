@@ -128,7 +128,7 @@ inputs = []
 for f in sorted(glob.glob(os.path.join(sketch, "*", "*.md"))):
     if os.path.basename(os.path.dirname(f)).startswith("."):
         continue
-    inputs.append({"path": os.path.relpath(f, sketch),
+    inputs.append({"path": os.path.relpath(f, sketch).replace(os.sep, "/"),
                    "sha256": hashlib.sha256(open(f, "rb").read()).hexdigest()})
 
 advs = []; objs = []; forks = []; xfam = False; verdict = "PASS"

@@ -2,14 +2,25 @@
 # Deterministic three-engine composed demo in a fresh Git repository.
 # The executor is a local fixture; Seamwise and Task-Spec are real binaries.
 set -uo pipefail
+# Windows: Python ends text lines with \r\n, and $(...) keeps the \r, so a captured
+# value such as a policy name silently fails comparisons. Normalize python3 stdout
+# to LF there; exit status is kept and stderr is untouched. Elsewhere nothing changes.
+case "$(uname -s)" in
+  MINGW*|MSYS*|CYGWIN*)
+    python3() {
+      command python3 "$@" | tr -d '\r'
+      return "${PIPESTATUS[0]}"
+    }
+    ;;
+esac
 export PYTHONDONTWRITEBYTECODE=1
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 TASKSPEC_BIN="${CVG_TASKSPEC_BIN:-taskspec}"
 SEAMWISE_BIN="${CVG_SEAMWISE_BIN:-seamwise}"
 DEMO_AGENT="${COMPOSE_DEMO_AGENT:-deterministic}"
-EXPECTED_TASKSPEC_COMMIT="0e6180cfc3009bd4ef9cf7ab050b463e10d4af91"
-EXPECTED_SEAMWISE_COMMIT="5a398169c3fefcb65eb1a47c0cb4f967dfdc0515"
+EXPECTED_TASKSPEC_COMMIT="d5121f8c870448e3864eb7cb22160f0b720d7d36"
+EXPECTED_SEAMWISE_COMMIT="862a90ad38a37a250af2d96c0fc2c3c2f8149519"
 TASKSPEC_SOURCE_ROOT="${CVG_TASKSPEC_SOURCE_ROOT:-}"
 SEAMWISE_SOURCE_ROOT="${CVG_SEAMWISE_SOURCE_ROOT:-}"
 REQUIRE_ENGINE_PROVENANCE="${COMPOSE_DEMO_REQUIRE_ENGINE_PROVENANCE:-0}"
@@ -179,9 +190,9 @@ assert receipt["contract"] == "ConvergeCompositionReceipt/v1"
 assert receipt["dispatch_authorized"] is False
 assert receipt["source"]["commit"] == source_commit
 assert receipt["versions"] == {
-    "converge": "0.2.0",
-    "seamwise": "0.2.0",
-    "task_spec": "3.8.0",
+    "converge": "0.3.0",
+    "seamwise": "0.3.0",
+    "task_spec": "3.10.0",
 }
 assert [item["task_id"] for item in receipt["tasks"]] == ["T-20260815-health-status"]
 try:
@@ -352,7 +363,7 @@ snapshot = {
 environment = {
     "contract": "ComposedDemoEnvironment/v1",
     "versions": {
-        "converge": "0.2.0",
+        "converge": "0.3.0",
         "task_spec": output([taskspec, "version"]),
         "seamwise": output([seamwise, "--version"]),
         "executor": output(["codex", "--version"]) if agent == "codex" else "deterministic-fixture/v1",

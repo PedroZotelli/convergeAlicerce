@@ -16,6 +16,18 @@ FAIL=0
 
 ok()  { printf '  ok   — %s\n' "$1"; PASS=$((PASS + 1)); }
 bad() { printf '  FAIL — %s\n' "$1"; FAIL=$((FAIL + 1)); }
+skip() { printf '  skip — %s\n' "$1"; }
+# Windows (Git Bash): POSIX mode bits do not exist on NTFS, and a real symlink needs
+# Developer Mode; without it Git Bash silently copies, so link cases are not testable.
+WINDOWS=false
+case "$(uname -s)" in MINGW*|MSYS*|CYGWIN*) WINDOWS=true ;; esac
+native_symlinks() {
+  [ "$WINDOWS" = true ] || return 0
+  local probe; probe="$(mktemp -d -t cvg-symlink-probe.XXXXXX)"
+  MSYS=winsymlinks:nativestrict ln -s "$probe" "$probe/link" 2>/dev/null && [ -L "$probe/link" ]
+  local rc=$?; rm -rf "$probe"; return $rc
+}
+[ "$WINDOWS" = true ] && export MSYS="${MSYS:+$MSYS }winsymlinks:nativestrict"
 local_state_fingerprint() {
   local f
   for f in config identity projection.lock; do
@@ -130,13 +142,16 @@ else
   bad "identity discovery was incorrectly short-circuited as a mutation"
 fi
 
-if [ "$(file_mode "$T/.cvg/config")" = "600" ] \
+if [ "$WINDOWS" = true ]; then
+  skip "machine-local .cvg mode 0600: POSIX mode bits do not apply on NTFS"
+elif [ "$(file_mode "$T/.cvg/config")" = "600" ] \
   && [ "$(file_mode "$T/.cvg/identity")" = "600" ]; then
   ok "machine-local .cvg choices are permissioned 0600"
 else
   bad "machine-local .cvg choices are not permissioned 0600"
 fi
 
+if native_symlinks; then
 # A local-state path is still an input boundary. Never follow a symlink while
 # replacing config: that could read an unrelated target into the new file or
 # make setup appear to write somewhere it does not own.
@@ -172,6 +187,9 @@ if [ "$IDENTITY_SYMLINK_RC" -ne 0 ] \
   ok "identity refuses a symlink without touching its target"
 else
   bad "identity followed or replaced a symlink"
+fi
+else
+  skip "symlinked .cvg config and identity: file symlinks need Developer Mode on Windows"
 fi
 rm -f "$T/.cvg/identity"
 mv "$T/.cvg/identity.keep" "$T/.cvg/identity"
@@ -250,8 +268,16 @@ fi
 # --symlink is retained as an explicit development mode.
 T3="$(mktemp -d -t cvg-install3.XXXXXX)"
 git -C "$T3" init --quiet
-bash "$SRC/install.sh" --target "$T3" --symlink --bin-dir "$T3/bin" >/dev/null 2>&1
-if [ -L "$T3/.agents/skills/idea-to-brd" ] \
+if ! native_symlinks; then
+  if ! bash "$SRC/install.sh" --target "$T3" --symlink --bin-dir "$T3/bin" >"$T3/symlink.out" 2>&1 \
+    && grep -q 'needs Windows symlinks' "$T3/symlink.out" \
+    && [ ! -e "$T3/.agents/skills/idea-to-brd" ]; then
+    ok "--symlink refuses clearly when Windows symlinks are unavailable"
+  else
+    bad "--symlink did not refuse without Windows symlinks"
+  fi
+elif bash "$SRC/install.sh" --target "$T3" --symlink --bin-dir "$T3/bin" >/dev/null 2>&1 \
+  && [ -L "$T3/.agents/skills/idea-to-brd" ] \
   && [ -L "$T3/.claude/skills/idea-to-brd" ] \
   && [ -L "$T3/.grok/skills/idea-to-brd" ] \
   && [ -L "$T3/.agents/bin/_cvg_compose.py" ] \

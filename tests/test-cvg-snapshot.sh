@@ -486,11 +486,11 @@ fi
 
 if printf '%s' "$FULL" | python3 -c "import json,sys
 s=json.load(sys.stdin)['data']['snapshot']
-schema=json.load(open('$ROOT/contracts/ui/v3/workspace-snapshot.schema.json'))
+schema=json.load(open(sys.argv[1]))
 assert set(schema['required'])==set(s)
 assert schema['properties']['schemaVersion']['const']==s['schemaVersion']
 assert schema['properties']['source']['enum']==['workspace','fixture']
-" 2>/dev/null; then
+" "$ROOT/contracts/ui/v3/workspace-snapshot.schema.json" 2>/dev/null; then
   ok "checked-in schema matches the emitted top-level surface"
 else
   bad "WorkspaceSnapshot schema" "schema is invalid or top-level keys drifted"

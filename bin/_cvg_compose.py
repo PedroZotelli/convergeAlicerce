@@ -102,6 +102,61 @@ def atomic_json(root: pathlib.Path, relative: str, value: dict[str, Any]) -> pat
     return path
 
 
+def bash_executable() -> str:
+    """The bash that runs engine scripts: "bash" off Windows, Git Bash's full path on it.
+
+    Windows looks for a bare program name in System32 before PATH, and
+    System32\\bash.exe is the WSL launcher, so a bare "bash" can start WSL.
+    """
+    if sys.platform != "win32":
+        return "bash"
+
+    def is_wsl_launcher(path: str) -> bool:
+        lowered = path.replace("/", "\\").lower()
+        return any(part in lowered for part in ("\\windows\\system32\\", "\\windows\\syswow64\\", "\\windowsapps\\"))
+
+    found = shutil.which("bash")
+    if found and not is_wsl_launcher(found):
+        return found
+    git = shutil.which("git")
+    if git:
+        for root in list(pathlib.Path(git).resolve().parents)[:3]:
+            for relative in ("bin/bash.exe", "usr/bin/bash.exe"):
+                candidate = root / relative
+                if candidate.is_file():
+                    return str(candidate)
+    raise FileNotFoundError("Git for Windows bash was not found; install Git for Windows")
+
+
+def engine_argv(command: list[str]) -> list[str]:
+    """Return an engine command that Windows can start; elsewhere it is unchanged.
+
+    Windows starts only .exe/.com/.cmd/.bat files: a bare name does not find an
+    extensionless engine such as taskspec, and a shebang script raises WinError
+    193. The script is handed to the interpreter its shebang names.
+    """
+    if sys.platform != "win32" or not command:
+        return command
+    program = command[0]
+    if not os.path.isfile(program):
+        program = shutil.which(program) or next(
+            (os.path.join(folder, program) for folder in os.environ.get("PATH", "").split(os.pathsep)
+             if folder and os.path.isfile(os.path.join(folder, program))),
+            program,
+        )
+    if not os.path.isfile(program) or os.path.splitext(program)[1].lower() in {".exe", ".com", ".cmd", ".bat"}:
+        return [program, *command[1:]]
+    with open(program, "rb") as handle:
+        first = handle.readline().decode("utf-8", "replace")
+    words = first[2:].split() if first.startswith("#!") else []
+    name = os.path.basename(words[-1] if words and words[0].endswith("/env") else (words[0] if words else ""))
+    if name.startswith("python"):
+        return [sys.executable, program, *command[1:]]
+    if name in {"bash", "sh"}:
+        return [bash_executable(), program, *command[1:]]
+    return [program, *command[1:]]
+
+
 def resolve_binary(explicit: str | None, fallback: str, label: str) -> str:
     candidate = explicit or shutil.which(fallback)
     if not candidate:
@@ -115,7 +170,7 @@ def resolve_binary(explicit: str | None, fallback: str, label: str) -> str:
 
 def run_json(command: list[str], *, cwd: pathlib.Path, env: dict[str, str] | None = None) -> tuple[dict[str, Any], int]:
     try:
-        completed = subprocess.run(command, cwd=cwd, env=env, capture_output=True, text=True, check=False)
+        completed = subprocess.run(engine_argv(command), cwd=cwd, env=env, capture_output=True, text=True, check=False)
     except OSError as exc:
         raise ComposeError(f"engine invocation failed: {exc}", exit_code=3, engine=True) from exc
     raw = completed.stdout.strip()
@@ -213,8 +268,9 @@ class Coordinator:
             raise ComposeError("Seamwise capabilities claim forbidden Task-Spec authority", exit_code=3, engine=True)
         self.seamwise_version = str(data.get("engine_version", ""))
         parsed = version_tuple(self.seamwise_version)
-        if parsed < (0, 2, 0) or parsed >= (0, 3, 0):
-            raise ComposeError("Converge compose requires Seamwise >=0.2.0 and <0.3.0", exit_code=3, engine=True)
+        # 0.3.x is the release pairing (Windows support); 0.2.x keeps the same contracts.
+        if parsed < (0, 2, 0) or parsed >= (0, 4, 0):
+            raise ComposeError("Converge compose requires Seamwise >=0.2.0 and <0.4.0", exit_code=3, engine=True)
 
     def _require_taskspec(self) -> None:
         if self.taskspec:

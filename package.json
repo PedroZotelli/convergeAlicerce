@@ -1,6 +1,6 @@
 {
-  "name": "@luanmorenommaciel/converge",
-  "version": "0.2.0",
+  "name": "@pedrozotelli/converge",
+  "version": "0.3.0",
   "description": "Compile intent into shipped software — eleven orchestration and assurance skills around the independently versioned Task-Spec engine, plus the cvg referee CLI; done is proven by runnable evals, never claimed.",
   "bin": {
     "cvg": "bin/cvg",
@@ -44,10 +44,10 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/luanmorenommaciel/converge.git"
+    "url": "git+https://github.com/PedroZotelli/convergeLuan.git"
   },
-  "homepage": "https://github.com/luanmorenommaciel/converge#readme",
-  "bugs": "https://github.com/luanmorenommaciel/converge/issues",
+  "homepage": "https://github.com/PedroZotelli/convergeLuan#readme",
+  "bugs": "https://github.com/PedroZotelli/convergeLuan/issues",
   "keywords": [
     "agentic",
     "task-spec",

@@ -37,7 +37,7 @@ S="$(newtree)"; python3 "$GEN" "$S" accept-no-owner >/dev/null; check accept-no-
 S="$(newtree)"; python3 "$GEN" "$S" no-fork >/dev/null;        check no-fork         "$S" 1 'fork.choice'          '^CHECK_CONSENSUS=OK'
 # fork A (plan-driven) is RETIRED — Converge is single-path (task-driven); the gate rejects A
 S="$(newtree)"; python3 "$GEN" "$S" good >/dev/null
-python3 -c "import json;p='$S/.consensus/objection-log.json';d=json.load(open(p));d['fork']['choice']='A';json.dump(d,open(p,'w'))"
+python3 -c "import json,sys;p=sys.argv[1];d=json.load(open(p));d['fork']['choice']='A';json.dump(d,open(p,'w'))" "$S/.consensus/objection-log.json"
 check fork-a-retired  "$S" 1 'RETIRED|plan-driven'   '^CHECK_CONSENSUS=OK'
 S="$(newtree)"; python3 "$GEN" "$S" no-objections >/dev/null;  check no-objections   "$S" 1 'blessed everything'   '^CHECK_CONSENSUS=OK'
 # provenance: tamper a plan AFTER stamping -> hash mismatch
@@ -117,7 +117,7 @@ chmod +x "$FAKEK"
 S="$(newtree)"
 TOTAL=$((TOTAL + 1)); OUT="$(CVG_CODEX_CMD="$FAKE" CVG_KIMI_CMD="$FAKEK" bash "$MULTI" --adversary codex,kimi --dir "$S" 2>&1)"; RC=$?
 if [ "$RC" -eq 0 ] && printf '%s\n' "$OUT" | grep -q '^REVIEW=OK$' \
-   && python3 -c "import json,sys; d=json.load(open('$S/.consensus/objection-log.json')); sys.exit(0 if len(d.get('adversaries',[]))==2 and len(d['objections'])==2 and d.get('cross_family') and d['objections'][1]['id']=='C2' else 1)"; then
+   && python3 -c "import json,sys; d=json.load(open(sys.argv[1])); sys.exit(0 if len(d.get('adversaries',[]))==2 and len(d['objections'])==2 and d.get('cross_family') and d['objections'][1]['id']=='C2' else 1)" "$S/.consensus/objection-log.json"; then
   printf 'ok    %-22s (exit %s)\n' dispatch-multi "$RC"
 else printf 'FAIL  %-22s exit %s\n' dispatch-multi "$RC"; printf '%s\n' "$OUT" | sed 's/^/      | /'; FAILED=$((FAILED + 1)); fi
 # Same for the merged path: two engines proposing is still nobody deciding.

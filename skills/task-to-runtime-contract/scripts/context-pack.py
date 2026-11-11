@@ -245,7 +245,7 @@ def main() -> int:
     out_dir = repo / "cvg" / "execution" / "_packs"
     out_dir.mkdir(parents=True, exist_ok=True)
     out = out_dir / f"{lane}.md"
-    out.write_text(payload, encoding="utf-8")
+    out.write_text(payload, encoding="utf-8", newline="\n")
     print(f"Terrain pack: {rel(out, repo)} ({len(payload.encode())} bytes, {len(sources)} sources)")
     print(f"CONTEXT_PACK=OK bytes={len(payload.encode())} lane={lane}")
     return 0

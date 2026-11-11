@@ -356,11 +356,11 @@ fi
 printf '%s' "$SO" | python3 -c "import json,sys
 d=json.load(sys.stdin)
 s=d['data']['snapshot']
-schema=json.load(open('$ROOT/contracts/ui/v3/workspace-snapshot.schema.json'))
+schema=json.load(open(sys.argv[1]))
 assert set(schema['required']) == set(s)
 assert schema['properties']['schemaVersion']['const'] == s['schemaVersion']
 assert schema['properties']['source']['enum'] == ['workspace','fixture']
-" 2>/dev/null \
+" "$ROOT/contracts/ui/v3/workspace-snapshot.schema.json" 2>/dev/null \
   && ok "snapshot v3 checked-in schema matches emitted surface" \
   || bad "snapshot schema" "schema is invalid or top-level keys drifted"
 
@@ -393,7 +393,7 @@ assert 'compose materialize' in d['data']['output']" 2>/dev/null \
 jrun --json version | python3 -c "import json,sys
 d=json.load(sys.stdin)
 assert d['contract']=='ConvergeCLIResult/v1' and d['command']=='version' and d['ok'] is True
-assert '0.2.0' in d['data']['output']" 2>/dev/null \
+assert sys.argv[1] in d['data']['output']" "$(tr -d '[:space:]' < "$ROOT/VERSION")" 2>/dev/null \
   && ok "version uses ConvergeCLIResult/v1" || bad "version under --json" "not universally enveloped"
 
 echo

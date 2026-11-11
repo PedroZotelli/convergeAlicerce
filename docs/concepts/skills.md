@@ -1,7 +1,7 @@
 # Skills reference
 
 Eleven Converge skills implement the method. Pass 5 Tasking is standalone
-[`taskspec`](https://github.com/luanmorenommaciel/task-spec), not a mirrored skill.
+[`taskspec`](https://github.com/PedroZotelli/task-specLuan), not a mirrored skill.
 
 ## Pass 0 · `idea-to-brd` (optional)
 
@@ -91,7 +91,7 @@ external CLI and its published contracts.
 
 **Gate:** `TIER=1` — the task is a signed runnable leaf.
 
-See: [Task-Spec repository](https://github.com/luanmorenommaciel/task-spec)
+See: [Task-Spec repository](https://github.com/PedroZotelli/task-specLuan)
 
 ## Pass 6 · `task-specs-to-issues` (opt-in)
 

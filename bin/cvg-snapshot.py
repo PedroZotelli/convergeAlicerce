@@ -1207,6 +1207,39 @@ def parse_decomposition(
     }
 
 
+# Without SYSTEMDRIVE and friends, Windows components expand "%SystemDrive%" literally
+# and create that directory, with system caches, inside the user's project.
+WINDOWS_SYSTEM_ENV = {"SYSTEMROOT", "SYSTEMDRIVE", "WINDIR", "PROGRAMDATA", "ALLUSERSPROFILE",
+                      "PROGRAMFILES", "COMMONPROGRAMFILES", "TEMP", "TMP", "USERPROFILE", "APPDATA",
+                      "LOCALAPPDATA", "PATHEXT", "COMSPEC", "PYTHONUTF8"}
+
+
+def bash_executable() -> str:
+    """The bash that runs engine scripts: "bash" off Windows, Git Bash's full path on it.
+
+    Windows looks for a bare program name in System32 before PATH, and
+    System32\\bash.exe is the WSL launcher, so a bare "bash" can start WSL.
+    """
+    if sys.platform != "win32":
+        return "bash"
+
+    def is_wsl_launcher(path: str) -> bool:
+        lowered = path.replace("/", "\\").lower()
+        return any(part in lowered for part in ("\\windows\\system32\\", "\\windows\\syswow64\\", "\\windowsapps\\"))
+
+    found = shutil.which("bash")
+    if found and not is_wsl_launcher(found):
+        return found
+    git = shutil.which("git")
+    if git:
+        for root in list(Path(git).resolve().parents)[:3]:
+            for relative in ("bin/bash.exe", "usr/bin/bash.exe"):
+                candidate = root / relative
+                if candidate.is_file():
+                    return str(candidate)
+    raise FileNotFoundError("Git for Windows bash was not found; install Git for Windows")
+
+
 class CvgRunner:
     def __init__(self, cvg_home: Path, project_root: Path) -> None:
         self.cvg_home = cvg_home
@@ -1216,11 +1249,15 @@ class CvgRunner:
             raise SnapshotError(f"cvg executable is missing: {self.executable}")
 
     def run(self, args: Iterable[str]) -> dict[str, Any]:
-        command = ["/bin/bash", str(self.executable), *args, "--json"]
+        # /bin/bash is not a path native Windows programs can start; Git Bash is on PATH.
+        bash = "/bin/bash" if os.path.exists("/bin/bash") else bash_executable()
+        command = [bash, str(self.executable), *args, "--json"]
         environment = {
             key: value
             for key, value in os.environ.items()
             if key in {"HOME", "PATH", "TMPDIR", "LANG", "LC_ALL"}
+            # Windows programs, Python included, need their system variables to start.
+            or (os.name == "nt" and key.upper() in WINDOWS_SYSTEM_ENV)
         }
         environment.update(
             {
@@ -1296,6 +1333,7 @@ def git_project(root: Path) -> dict[str, Any]:
                 key: value
                 for key, value in os.environ.items()
                 if key in {"HOME", "PATH", "TMPDIR", "LANG", "LC_ALL"}
+                or (os.name == "nt" and key.upper() in WINDOWS_SYSTEM_ENV)
             }
             | {"GIT_OPTIONAL_LOCKS": "0"},
         )
@@ -2488,6 +2526,7 @@ def build_health(
                     key: value
                     for key, value in os.environ.items()
                     if key in {"HOME", "PATH", "TMPDIR", "LANG", "LC_ALL"}
+                    or (os.name == "nt" and key.upper() in WINDOWS_SYSTEM_ENV)
                 }
                 | {"GIT_OPTIONAL_LOCKS": "0"},
             )

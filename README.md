@@ -6,12 +6,12 @@
 
 **Coordinate intent, decomposition, task authority, execution, and settlement without duplicating authority.**
 
-[![ci](https://github.com/luanmorenommaciel/converge/actions/workflows/ci.yml/badge.svg)](https://github.com/luanmorenommaciel/converge/actions/workflows/ci.yml)
-[![release](https://img.shields.io/github/v/release/luanmorenommaciel/converge)](https://github.com/luanmorenommaciel/converge/releases)
+[![ci](https://github.com/PedroZotelli/convergeLuan/actions/workflows/ci.yml/badge.svg)](https://github.com/PedroZotelli/convergeLuan/actions/workflows/ci.yml)
+[![release](https://img.shields.io/github/v/release/PedroZotelli/convergeLuan)](https://github.com/PedroZotelli/convergeLuan/releases)
 [![bash 3.2+](https://img.shields.io/badge/bash-3.2%2B-4EAA25?logo=gnubash&logoColor=white)](#requirements)
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-Converge 0.2.0 | cvg 0.2.0 | Seamwise 0.2.0 | Task-Spec 3.8.0
+Converge 0.3.0 | cvg 0.3.0 | Seamwise 0.3.0 | Task-Spec 3.10.0
 
 [Owns](#what-converge-owns) · [Skills](#why-the-skills-exist) · [Descent](#descent) · [Chat](#chat-experience) · [CLI](#cli) · [Install](#install) · [Docs](#documentation)
 
@@ -40,7 +40,7 @@ full non-authority table is in [docs/concepts/authority.md](docs/concepts/author
 
 ## Why the skills exist
 
-The CLI is the referee. Skills exist so a chat agent finds the next pass without reading the whole method. The installer projects **exactly eleven** Converge skills to `.agents/skills/`, `.claude/skills/`, and `.grok/skills/`. Pass 5 Tasking is standalone [`taskspec`](https://github.com/luanmorenommaciel/task-spec), not a mirrored skill.
+The CLI is the referee. Skills exist so a chat agent finds the next pass without reading the whole method. The installer projects **exactly eleven** Converge skills to `.agents/skills/`, `.claude/skills/`, and `.grok/skills/`. Pass 5 Tasking is standalone [`taskspec`](https://github.com/PedroZotelli/task-specLuan), not a mirrored skill.
 
 <table>
 <tr>
@@ -87,7 +87,7 @@ The CLI is the referee. Skills exist so a chat agent finds the next pass without
 </tr>
 <tr>
   <td>5</td>
-  <td>standalone <a href="https://github.com/luanmorenommaciel/task-spec"><code>taskspec</code></a></td>
+  <td>standalone <a href="https://github.com/PedroZotelli/task-specLuan"><code>taskspec</code></a></td>
   <td>Turn accepted legs into atomic, vendor-neutral units with runnable evals</td>
   <td><strong>When</strong> accepted legs must become sealed Task-Specs.<br><strong>Not</strong> a Converge skill; use the standalone taskspec CLI. Converge does not install a mirrored Task-Spec skill.</td>
   <td><code>TIER=1</code></td>
@@ -275,7 +275,7 @@ cvg compose --json status
 
 `--json` emits one `ConvergeCLIResult/v1` document. The canonical 60-form matrix is [contracts/cli-command-matrix.json](contracts/cli-command-matrix.json); the human reference is [docs/reference/cli.md](docs/reference/cli.md).
 
-Task-Spec pin remains **3.8.0**; 3.9.x writes an absolute `path:` into `_state.yaml` and is not supported.
+Task-Spec pin is **3.10.0**, whose `rebuild-state` always writes repository-relative paths; 3.9.x writes an absolute `path:` into `_state.yaml` and is rejected.
 
 ## Install
 
@@ -284,34 +284,34 @@ Task-Spec pin remains **3.8.0**; 3.9.x writes an absolute `path:` into `_state.y
 - Git
 - Bash 3.2 or newer
 - Python 3
-- Task-Spec 3.8.0 for every Converge installation
-- Seamwise 0.2.0 only for decomposition and `cvg compose`
+- Task-Spec 3.10.0 for every Converge installation
+- Seamwise 0.3.0 only for decomposition and `cvg compose`
 - Node 22 only for the npm door and Cockpit
 
 Install the published stack in dependency order:
 
 ```bash
-git clone --branch v3.8.0 https://github.com/luanmorenommaciel/task-spec.git
-bash task-spec/install.sh --global --copy
+git clone --branch v3.10.0 https://github.com/PedroZotelli/task-specLuan.git
+bash task-specLuan/install.sh --global --copy
 taskspec demo
 
-python3 -m pip install   "git+https://github.com/luanmorenommaciel/seamwise.git@v0.2.0"
+python3 -m pip install   "git+https://github.com/PedroZotelli/seamwiseLuan.git@v0.3.0"
 
-git clone --branch v0.2.0   https://github.com/luanmorenommaciel/converge.git
-bash converge/install.sh --target /absolute/path/to/your-project --copy
+git clone --branch v0.3.0   https://github.com/PedroZotelli/convergeLuan.git
+bash convergeLuan/install.sh --target /absolute/path/to/your-project --copy
 ```
 
 Converge also supports:
 
 ```bash
-npm install -g github:luanmorenommaciel/converge
+npm install -g github:PedroZotelli/convergeLuan
 cvg-install
 ```
 
 or:
 
 ```bash
-CVG_REF=v0.2.0   bash -c "$(curl -fsSL https://raw.githubusercontent.com/luanmorenommaciel/converge/main/install.sh)"
+CVG_REF=v0.3.0   bash -c "$(curl -fsSL https://raw.githubusercontent.com/PedroZotelli/convergeLuan/main/install.sh)"
 ```
 
 The installer projects exactly eleven Converge skills to `.agents/skills/`,
@@ -319,6 +319,9 @@ The installer projects exactly eleven Converge skills to `.agents/skills/`,
 implementation. The repository is private; all install doors require access.
 
 ## Release truth
+
+The rows below record the original project's releases. This fork's own line starts
+at Converge 0.3.0 with Task-Spec 3.10.0 and Seamwise 0.3.0; see `CHANGELOG.md`.
 
 | Claim | Current evidence |
 |---|---|
@@ -395,8 +398,8 @@ make release-check
 
 A green local `make check` needs the release pairing:
 
-- Task-Spec **3.8.0** at commit `0e6180cfc3009bd4ef9cf7ab050b463e10d4af91`
-- Seamwise **0.2.0** at commit `5a398169c3fefcb65eb1a47c0cb4f967dfdc0515`
+- Task-Spec **3.10.0** at commit `d5121f8c870448e3864eb7cb22160f0b720d7d36`
+- Seamwise **0.3.0** at commit `862a90ad38a37a250af2d96c0fc2c3c2f8149519`
 
 ## Contributing
 

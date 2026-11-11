@@ -12,7 +12,7 @@ inputs = []
 for f in sorted(glob.glob(os.path.join(sketch, "swimlane-*", "*.md"))):
     if os.path.basename(os.path.dirname(f)).startswith("."):
         continue
-    rel = os.path.relpath(f, sketch)
+    rel = os.path.relpath(f, sketch).replace(os.sep, "/")  # the log's portable form
     inputs.append({"path": rel, "sha256": hashlib.sha256(open(f, "rb").read()).hexdigest()})
 
 log = {

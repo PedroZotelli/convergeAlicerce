@@ -22,6 +22,8 @@ import jsonschema
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 CVG = ROOT / "bin" / "cvg"
+sys.path.insert(0, str(ROOT / "bin"))
+from _cvg_compose import bash_executable  # noqa: E402
 MATRIX_PATH = ROOT / "contracts" / "cli-command-matrix.json"
 RESULT_SCHEMA_PATH = ROOT / "contracts" / "converge-cli-result-v1.schema.json"
 ANSI = "\x1b["
@@ -78,6 +80,8 @@ def invoke(
 ) -> tuple[dict[str, object], int]:
     flags = ["--json", *(["--dry-run"] if dry_run else [])]
     command = [
+        # Through Git Bash: Windows cannot start a shebang script by itself.
+        bash_executable(),
         str(CVG),
         *(flags if flags_first else []),
         *arguments,
@@ -235,7 +239,7 @@ def main() -> int:
                 check=True,
             )
             (workspace / "README.md").write_text(
-                "# JSON matrix fixture\n", encoding="utf-8"
+                "# JSON matrix fixture\n", encoding="utf-8", newline="\n"
             )
             (workspace / "cvg" / "tasks").mkdir(parents=True)
             (workspace / ".cvg").mkdir()

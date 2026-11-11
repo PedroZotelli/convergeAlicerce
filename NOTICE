@@ -1,0 +1,9 @@
+Converge — Pedro Zotelli's line of the fork
+https://github.com/PedroZotelli/convergeLuan
+
+This project is a fork of Converge by Luan Moreno Medeiros Maciel
+(https://github.com/luanmorenommaciel/converge), taken through the fork at
+https://github.com/niltontac/converge, used under the MIT License (see LICENSE).
+Retained evidence in evidence/ and the release history in
+CHANGELOG.md describe the original releases and are kept unchanged. Changes made
+in this fork are listed in CHANGELOG.md from 0.3.0 onward.

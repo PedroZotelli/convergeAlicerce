@@ -20,6 +20,17 @@ trap cleanup EXIT
 
 ok()  { PASS=$((PASS + 1)); printf '  ok   — %s\n' "$1"; }
 bad() { FAIL=$((FAIL + 1)); printf '  FAIL — %s\n' "$1" >&2; }
+# Windows (Git Bash): POSIX mode bits do not exist on NTFS, and the directory link
+# any user can create there is a junction (a symlink needs Developer Mode).
+WINDOWS=false
+case "$(uname -s)" in MINGW*|MSYS*|CYGWIN*) WINDOWS=true ;; esac
+make_dir_link() { # make_dir_link <target> <link>
+  if [ "$WINDOWS" = true ]; then
+    cmd //c mklink //J "$(cygpath -w "$2")" "$(cygpath -w "$1")" >/dev/null
+  else
+    ln -s "$1" "$2"
+  fi
+}
 run_cvg() {
   (
     cd "$ROOM" || exit 1
@@ -98,7 +109,7 @@ fi
 
 git -C "$SAFETY_ROOM" init --quiet
 mkdir -p "$SAFETY_ROOM/redirect"
-ln -s redirect "$SAFETY_ROOM/cvg"
+make_dir_link "$SAFETY_ROOM/redirect" "$SAFETY_ROOM/cvg"
 UNSAFE_INIT="$(
   CVG_HOME="$ROOM/.agents" CVG_PROJECT_ROOT="$SAFETY_ROOM" \
     "$ROOM/bin/cvg" init 2>&1 || true
@@ -134,8 +145,9 @@ SIGN_TWO="$(run_cvg setup signing 2>&1)"
 KEY="$ROOM/.git/info/taskspec-signing-key"
 if printf '%s\n' "$SIGN_ONE" | grep -q '^SETUP_SIGNING=OK$' \
   && printf '%s\n' "$SIGN_TWO" | grep -q '^SETUP_SIGNING=UNCHANGED$' \
-  && [ "$(file_mode "$KEY")" = "600" ]; then
-  ok "signing setup is idempotent, Git-private, and mode 0600"
+  && { [ "$WINDOWS" = true ] || [ "$(file_mode "$KEY")" = "600" ]; }; then
+  # NTFS has no POSIX mode bits; the key stays private inside .git/info there.
+  ok "signing setup is idempotent, Git-private, and mode 0600 (mode not applicable on Windows)"
 else
   bad "signing setup or permissions failed"
 fi
@@ -282,8 +294,9 @@ TASKSPEC_BACKLOG_DIR="$ROOM/cvg/tasks" "$TASKSPEC_REBUILD_BIN" rebuild-state >/d
 STATE_ONE="$(shasum -a 256 "$ROOM/cvg/tasks/_state.yaml" | awk '{print $1}')"
 TASKSPEC_BACKLOG_DIR="$ROOM/cvg/tasks" "$TASKSPEC_REBUILD_BIN" rebuild-state >/dev/null
 STATE_TWO="$(shasum -a 256 "$ROOM/cvg/tasks/_state.yaml" | awk '{print $1}')"
+# path: is relative either to the backlog parent (Task-Spec 3.8) or to the Git root (3.10).
 if [ "$STATE_ONE" = "$STATE_TWO" ] \
-  && grep -q "path: tasks/done/$SPEC_ID.md" "$ROOM/cvg/tasks/_state.yaml" \
+  && grep -qE "^  path: (cvg/)?tasks/done/$SPEC_ID\.md$" "$ROOM/cvg/tasks/_state.yaml" \
   && grep -q 'done: 1' "$ROOM/cvg/tasks/_state.yaml" \
   && grep -q 'parked: 0' "$ROOM/cvg/tasks/_state.yaml"; then
   ok "derived state is deterministic, relative, and complete"

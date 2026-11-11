@@ -6,6 +6,7 @@ from __future__ import annotations
 import json
 import pathlib
 import re
+import shutil
 import subprocess
 import sys
 
@@ -36,6 +37,32 @@ ARCHIVED_TREE_PATHS = (
     "converge-brand-kit-v1.zip",
     "converge-brand-concepts-round-01.zip",
 )
+
+
+def bash_executable() -> str:
+    """The bash that runs engine scripts: "bash" off Windows, Git Bash's full path on it.
+
+    Windows looks for a bare program name in System32 before PATH, and
+    System32\\bash.exe is the WSL launcher, so a bare "bash" can start WSL.
+    """
+    if sys.platform != "win32":
+        return "bash"
+
+    def is_wsl_launcher(path: str) -> bool:
+        lowered = path.replace("/", "\\").lower()
+        return any(part in lowered for part in ("\\windows\\system32\\", "\\windows\\syswow64\\", "\\windowsapps\\"))
+
+    found = shutil.which("bash")
+    if found and not is_wsl_launcher(found):
+        return found
+    git = shutil.which("git")
+    if git:
+        for root in list(pathlib.Path(git).resolve().parents)[:3]:
+            for relative in ("bin/bash.exe", "usr/bin/bash.exe"):
+                candidate = root / relative
+                if candidate.is_file():
+                    return str(candidate)
+    raise FileNotFoundError("Git for Windows bash was not found; install Git for Windows")
 
 
 def anchor(value: str) -> str:
@@ -89,7 +116,7 @@ def check_fences(path: pathlib.Path, text: str, failures: list[str]) -> None:
             if not re.match(r"^(flowchart|graph|sequenceDiagram|stateDiagram|classDiagram)", first):
                 fail(f"{path.relative_to(ROOT)} has an invalid Mermaid opening: {first}", failures)
         if language == "bash":
-            result = subprocess.run(["bash", "-n"], input=body, text=True, capture_output=True)
+            result = subprocess.run([bash_executable(), "-n"], input=body, text=True, capture_output=True)
             if result.returncode != 0:
                 fail(
                     f"{path.relative_to(ROOT)} bash block fails syntax smoke: {result.stderr.strip()}",
@@ -110,8 +137,8 @@ def main() -> int:
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
     for claim in (
         f"Converge {VERSION}",
-        "Seamwise 0.2.0",
-        "Task-Spec 3.8.0",
+        "Seamwise 0.3.0",
+        "Task-Spec 3.10.0",
         "Hosted CI",
         "Historical Converge 0.1.0",
     ):

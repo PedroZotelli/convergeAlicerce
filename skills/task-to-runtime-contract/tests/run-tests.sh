@@ -926,11 +926,13 @@ else
 fi
 
 # The success receipt exists only because settlement actually happened.
+# The path goes in as an argument: Git Bash converts arguments for native Windows
+# Python, but not a /tmp path written inside the program text.
 if python3 -c "
-import json
-r = json.load(open('$WP4_REPO/cvg/receipts/T-20260602-golden.json'))
+import json, sys
+r = json.load(open(sys.argv[1]))
 assert r['result'] == 'pass', r['result']
-" 2>/dev/null; then
+" "$WP4_REPO/cvg/receipts/T-20260602-golden.json" 2>/dev/null; then
   ok "the success receipt is written after settlement, not before (WP4)"
 else
   bad "receipt ordering is wrong"
@@ -953,6 +955,26 @@ else
   bad "an out-of-scope file was committed"
 fi
 rm -rf "$WP4_REPO"
+
+# A Windows checkout turns the committed LF spec into CRLF; the binding must not call
+# that stale, while any content change still must. Proven on every OS, not only Windows.
+if python3 - "$SKILL_DIR/scripts" <<'PY'
+import pathlib, sys, tempfile
+sys.path.insert(0, sys.argv[1])
+from _runtime_contract import spec_sha256
+with tempfile.TemporaryDirectory() as scratch:
+    lf, crlf, edited = (pathlib.Path(scratch) / name for name in ('lf.md', 'crlf.md', 'edited.md'))
+    lf.write_bytes(b'---\nid: T-1\n---\nbody\n')
+    crlf.write_bytes(b'---\r\nid: T-1\r\n---\r\nbody\r\n')
+    edited.write_bytes(b'---\nid: T-1\n---\nbody changed\n')
+    assert spec_sha256(lf) == spec_sha256(crlf)
+    assert spec_sha256(lf) != spec_sha256(edited)
+PY
+then
+  ok "the spec digest ignores CRLF vs LF but still catches a content change"
+else
+  bad "the spec digest depends on line endings or misses a content change"
+fi
 
 printf '\n'
 if [ "$FAIL" -eq 0 ]; then

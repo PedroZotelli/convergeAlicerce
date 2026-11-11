@@ -1,6 +1,6 @@
 # Installation
 
-Converge 0.2.0 requires Task-Spec **3.8.x** for every install. Seamwise **0.2.x**
+Converge 0.3.0 requires Task-Spec **3.10.x** (3.8.x still works) for every install. Seamwise **0.3.x**
 is required only for `cvg decompose` and `cvg compose`. Node 22 is required only
 for the npm door and Cockpit.
 
@@ -12,8 +12,8 @@ Seamwise implementation into the consumer.
 - Git
 - Bash 3.2 or newer
 - Python 3
-- Task-Spec 3.8.0 (`0e6180cfc3009bd4ef9cf7ab050b463e10d4af91`)
-- Seamwise 0.2.0 (`5a398169c3fefcb65eb1a47c0cb4f967dfdc0515`) for compose
+- Task-Spec 3.10.0 (`d5121f8c870448e3864eb7cb22160f0b720d7d36`)
+- Seamwise 0.3.0 (`862a90ad38a37a250af2d96c0fc2c3c2f8149519`) for compose
 - Node 22 only for npm / Cockpit
 
 Task-Spec 3.9.x is rejected on purpose: `rebuild-state` writes an absolute
@@ -22,30 +22,30 @@ Task-Spec 3.9.x is rejected on purpose: `rebuild-state` writes an absolute
 ## Install in dependency order
 
 ```bash
-git clone --branch v3.8.0 https://github.com/luanmorenommaciel/task-spec.git
-bash task-spec/install.sh --global --copy
+git clone --branch v3.10.0 https://github.com/PedroZotelli/task-specLuan.git
+bash task-specLuan/install.sh --global --copy
 taskspec demo
 
 python3 -m pip install \
-  "git+https://github.com/luanmorenommaciel/seamwise.git@v0.2.0"
+  "git+https://github.com/PedroZotelli/seamwiseLuan.git@v0.3.0"
 
-git clone --branch v0.2.0 https://github.com/luanmorenommaciel/converge.git
-bash converge/install.sh --target /absolute/path/to/your-project --copy
+git clone --branch v0.3.0 https://github.com/PedroZotelli/convergeLuan.git
+bash convergeLuan/install.sh --target /absolute/path/to/your-project --copy
 ```
 
 Other Converge doors:
 
 ```bash
-npm install -g github:luanmorenommaciel/converge
+npm install -g github:PedroZotelli/convergeLuan
 cvg-install
 ```
 
 ```bash
-CVG_REF=v0.2.0 bash -c "$(curl -fsSL \
-  https://raw.githubusercontent.com/luanmorenommaciel/converge/main/install.sh)"
+CVG_REF=v0.3.0 bash -c "$(curl -fsSL \
+  https://raw.githubusercontent.com/PedroZotelli/convergeLuan/main/install.sh)"
 ```
 
-`install.sh` fails if `taskspec` is missing or not 3.8.x. Copy mode pins
+`install.sh` fails if `taskspec` is missing, 3.9.x, or outside 3.8 to 3.x. Copy mode pins
 coordinator, contracts, templates, and skills into the consumer. It does not
 vendor the engines.
 

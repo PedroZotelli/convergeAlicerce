@@ -632,17 +632,32 @@ has "projection cache returns the latest literal mapping" "$OUT" \
   "00000000-0000-0000-0000-000000000002"
 ROWS="$(awk -F'\t' '$1=="project" && $2=="Analytics Backbone"{n++} END{print n+0}' "$PROJECTION_LOCK")"
 rc_is "projection cache replaces rather than duplicates a key" "$ROWS" "1"
-MODE="$(python3 -c 'import os,sys; print(oct(os.stat(sys.argv[1]).st_mode & 0o777)[2:])' "$PROJECTION_LOCK")"
-rc_is "projection cache is mode 0600" "$MODE" "600"
+case "$(uname -s)" in
+  MINGW*|MSYS*|CYGWIN*)
+    # NTFS has no POSIX mode bits; the cache lives in the user's own directory there.
+    printf '  skip — projection cache mode 0600: POSIX mode bits do not apply on NTFS\n' ;;
+  *)
+    MODE="$(python3 -c 'import os,sys; print(oct(os.stat(sys.argv[1]).st_mode & 0o777)[2:])' "$PROJECTION_LOCK")"
+    rc_is "projection cache is mode 0600" "$MODE" "600" ;;
+esac
 if ! find "$WORK" -maxdepth 1 -name '.projection-lock.*' -print | grep -q .; then
   ok "projection cache leaves no temporary file behind"
 else
   bad "projection cache leaked a temporary file"
 fi
+# A file symlink needs Developer Mode on Windows, and Git Bash otherwise copies;
+# where no real symlink can be made, no unprivileged user can plant one either.
+native_file_symlinks() {
+  case "$(uname -s)" in MINGW*|MSYS*|CYGWIN*) ;; *) return 0 ;; esac
+  local probe; probe="$(mktemp -d)"; printf x > "$probe/target"
+  MSYS=winsymlinks:nativestrict ln -s "$probe/target" "$probe/link" 2>/dev/null && [ -L "$probe/link" ]
+  local rc=$?; rm -rf "$probe"; return $rc
+}
+if native_file_symlinks; then
 PROJECTION_TARGET="$WORK/projection-target"
 PROJECTION_LINK="$WORK/projection-link"
 printf 'untouched\n' > "$PROJECTION_TARGET"
-ln -s "$PROJECTION_TARGET" "$PROJECTION_LINK"
+MSYS=winsymlinks:nativestrict ln -s "$PROJECTION_TARGET" "$PROJECTION_LINK"
 TSI_PROJECTION_LOCK="$PROJECTION_LINK" bash -c '
   . "$1"
   _ln_lock_put project "Unsafe" "00000000-0000-0000-0000-000000000003"
@@ -651,6 +666,9 @@ if [ -L "$PROJECTION_LINK" ] && [ "$(cat "$PROJECTION_TARGET")" = "untouched" ];
   ok "projection cache refuses a symlink without touching its target"
 else
   bad "projection cache followed or replaced a symlink"
+fi
+else
+  printf '  skip — projection cache symlink: file symlinks need Developer Mode on Windows\n'
 fi
 
 # -----------------------------------------------------------------------------

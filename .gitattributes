@@ -1,1 +1,4 @@
+# LF everywhere: CRLF breaks bash scripts and changes the bytes behind hashes.
+* text=auto eol=lf
 *.pdf binary
+*.png binary

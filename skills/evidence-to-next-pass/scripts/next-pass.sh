@@ -249,7 +249,9 @@ inputs = {i["path"]: i.get("sha256")
 if not inputs:
     sys.exit(0)                      # no provenance recorded — the gate reports that
 for f in sorted(glob.glob(os.path.join(lanes, "*", "*.md"))):
-    rel = os.path.relpath(f, lanes)
+    # Logs record forward slashes; Windows relpath returns backslashes, which
+    # matched nothing and silently skipped the staleness check.
+    rel = os.path.relpath(f, lanes).replace(os.sep, "/")
     want = inputs.get(rel) or inputs.get(f)
     if not want:
         continue                     # unseen by the review — again, the gate's call
