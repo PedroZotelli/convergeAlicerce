@@ -43,6 +43,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from _runtime_contract import (  # noqa: E402
     ContractError,
+    engine_argv,
     parse_frontmatter,
     resolve_inside_repo,
     resolve_repo,
@@ -185,6 +186,44 @@ Reply with ONLY this JSON and nothing else:
 """
 
 
+class _WindowsJob:
+    """A kill-on-close Job Object. Every process the judge starts joins it, including
+    helpers a POSIX shell layer re-parents outside the visible process tree, so
+    terminating the job is the Windows counterpart of killpg on the session."""
+
+    def __init__(self, process: subprocess.Popen) -> None:
+        import ctypes
+        from ctypes import wintypes
+
+        class _Basic(ctypes.Structure):
+            _fields_ = [("PerProcessUserTimeLimit", ctypes.c_int64), ("PerJobUserTimeLimit", ctypes.c_int64),
+                        ("LimitFlags", wintypes.DWORD), ("MinimumWorkingSetSize", ctypes.c_size_t),
+                        ("MaximumWorkingSetSize", ctypes.c_size_t), ("ActiveProcessLimit", wintypes.DWORD),
+                        ("Affinity", ctypes.c_size_t), ("PriorityClass", wintypes.DWORD),
+                        ("SchedulingClass", wintypes.DWORD)]
+
+        class _Extended(ctypes.Structure):
+            _fields_ = [("BasicLimitInformation", _Basic), ("IoInfo", ctypes.c_uint64 * 6),
+                        ("ProcessMemoryLimit", ctypes.c_size_t), ("JobMemoryLimit", ctypes.c_size_t),
+                        ("PeakProcessMemoryUsed", ctypes.c_size_t), ("PeakJobMemoryUsed", ctypes.c_size_t)]
+
+        self._kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+        self._kernel32.CreateJobObjectW.restype = wintypes.HANDLE
+        self._handle = self._kernel32.CreateJobObjectW(None, None)
+        limits = _Extended()
+        limits.BasicLimitInformation.LimitFlags = 0x2000  # JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE
+        self._kernel32.SetInformationJobObject(wintypes.HANDLE(self._handle), 9, ctypes.byref(limits), ctypes.sizeof(limits))
+        self._kernel32.AssignProcessToJobObject(wintypes.HANDLE(self._handle), wintypes.HANDLE(int(process._handle)))
+        self._wrap = wintypes.HANDLE
+
+    def terminate(self) -> None:
+        if self._handle:
+            # Handles are pointer-sized; an untyped int argument would be truncated.
+            self._kernel32.TerminateJobObject(self._wrap(self._handle), 1)
+            self._kernel32.CloseHandle(self._wrap(self._handle))
+            self._handle = None
+
+
 def run_judge(engine: str, prompt: str, timeout: int) -> tuple[bool, str]:
     """Dispatch headless + read-only. Any failure is a failure — never a pass."""
     commands = {
@@ -200,28 +239,37 @@ def run_judge(engine: str, prompt: str, timeout: int) -> tuple[bool, str]:
         # Vendor CLIs may inspect stdin or spawn helpers. Close stdin explicitly
         # and own a fresh process group so a timeout kills the whole dispatch,
         # not only its parent while a grandchild keeps stdout/stderr pipes open.
+        # Windows has no sessions or process-group signals; a Job Object owns the
+        # whole dispatch there instead (see _WindowsJob).
+        group = ({"creationflags": subprocess.CREATE_NEW_PROCESS_GROUP} if sys.platform == "win32"
+                 else {"start_new_session": True})
         proc = subprocess.Popen(
-            cmd,
+            engine_argv(cmd),
             text=True,
             stdin=subprocess.DEVNULL,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
-            start_new_session=True,
+            **group,
         )
+        job = _WindowsJob(proc) if sys.platform == "win32" else None
         try:
             stdout, stderr = proc.communicate(timeout=timeout)
         except subprocess.TimeoutExpired:
-            try:
-                os.killpg(proc.pid, signal.SIGTERM)
-            except ProcessLookupError:
-                pass
+            if job is not None:
+                job.terminate()
+            else:
+                try:
+                    os.killpg(proc.pid, signal.SIGTERM)
+                except ProcessLookupError:
+                    pass
             try:
                 proc.communicate(timeout=1)
             except subprocess.TimeoutExpired:
-                try:
-                    os.killpg(proc.pid, signal.SIGKILL)
-                except ProcessLookupError:
-                    pass
+                if job is None:  # terminating the job above was already forceful
+                    try:
+                        os.killpg(proc.pid, signal.SIGKILL)
+                    except ProcessLookupError:
+                        pass
                 try:
                     proc.communicate(timeout=1)
                 except subprocess.TimeoutExpired:

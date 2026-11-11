@@ -1,9 +1,9 @@
-# cvg 0.2.0
+# cvg 0.3.0
 
 `cvg` is the Converge composition coordinator and assurance referee. It
 preserves the established command paths, delegates Task-Spec lifecycle
-authority to the external Task-Spec 3.8 engine, and delegates reviewed
-decomposition to external Seamwise 0.2 for `cvg compose`.
+authority to the external Task-Spec 3.10 engine, and delegates reviewed
+decomposition to external Seamwise 0.3 for `cvg compose`.
 
 The canonical command list is
 [../contracts/cli-command-matrix.json](../contracts/cli-command-matrix.json).

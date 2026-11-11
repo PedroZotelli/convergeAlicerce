@@ -37,18 +37,14 @@ jobs:
           fi
           npm ci --prefix apps/cockpit
       - name: Install exact external engines
-        env:
-          GH_TOKEN: ${{ secrets.RELEASE_STACK_READ_TOKEN }}
         run: |
-          test -n "$GH_TOKEN" || { echo "::error::RELEASE_STACK_READ_TOKEN is required"; exit 5; }
           taskspec_dir="$(mktemp -d -t task-spec-engine.XXXXXX)"
           seamwise_dir="$(mktemp -d -t seamwise-engine.XXXXXX)"
-          gh auth setup-git
-          git clone --quiet https://github.com/luanmorenommaciel/task-spec.git "$taskspec_dir"
-          git -C "$taskspec_dir" checkout --quiet --detach 0e6180cfc3009bd4ef9cf7ab050b463e10d4af91
+          git clone --quiet https://github.com/PedroZotelli/task-specLuan.git "$taskspec_dir"
+          git -C "$taskspec_dir" checkout --quiet --detach d5121f8c870448e3864eb7cb22160f0b720d7d36
           bash "$taskspec_dir/install.sh" --global --copy
-          git clone --quiet https://github.com/luanmorenommaciel/seamwise.git "$seamwise_dir"
-          git -C "$seamwise_dir" checkout --quiet --detach 5a398169c3fefcb65eb1a47c0cb4f967dfdc0515
+          git clone --quiet https://github.com/PedroZotelli/seamwiseLuan.git "$seamwise_dir"
+          git -C "$seamwise_dir" checkout --quiet --detach 862a90ad38a37a250af2d96c0fc2c3c2f8149519
           python -m pip install --disable-pip-version-check "$seamwise_dir"
           {
             printf 'PATH=%s/.local/bin:%s\n' "$HOME" "$PATH"
@@ -75,7 +71,7 @@ jobs:
           node-version: "22"
       - name: Assemble stable assets
         run: |
-          test "$(cat VERSION)" = "0.2.0"
+          test "$(cat VERSION)" = "0.3.0"
           if [[ "$GITHUB_REF_TYPE" = tag ]]; then test "$GITHUB_REF_NAME" = "v$(cat VERSION)"; fi
           mkdir -p dist release-assets
           package="$(npm pack --pack-destination dist --silent)"
@@ -108,8 +104,8 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create v0.2.0 release-assets/* \
+          gh release create "v$(cat VERSION)" release-assets/* \
             --repo "$GITHUB_REPOSITORY" \
-            --title "Converge 0.2.0" \
+            --title "Converge $(cat VERSION)" \
             --generate-notes \
             --verify-tag

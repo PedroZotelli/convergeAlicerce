@@ -685,12 +685,12 @@ fi
 # Dotfiles must not be mangled. lstrip("./") turned ".env" into "env" and
 # quietly exempted exactly the files most worth guarding.
 if python3 -c "
-import sys; sys.path.insert(0, '$SRC/skills/task-to-runtime-contract/scripts')
+import sys; sys.path.insert(0, sys.argv[1])
 from _gate_policy import parse_gate
 g = parse_gate('version: 1\ndenylist:\n  - \".env\"\n  - \".github/workflows/**\"\n')
 assert g.forbids('.env'), '.env not matched'
 assert g.forbids('.github/workflows/ci.yml'), 'workflow not matched'
-" 2>/dev/null; then
+" "$SRC/skills/task-to-runtime-contract/scripts" 2>/dev/null; then
   ok "dotfile paths are matched, not silently renamed"
 else
   bad "dotfile paths are still being mangled"

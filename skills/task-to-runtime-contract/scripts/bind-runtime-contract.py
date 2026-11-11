@@ -28,6 +28,7 @@ from _runtime_contract import (
     resolve_repo,
     run_signoff_gate,
     sha256_file,
+    spec_sha256,
     task_paths,
     validate_topology,
     weakest_link,
@@ -246,7 +247,7 @@ def main() -> int:
 
         # The capability envelope: the Task-Spec's declared scope compiled into
         # epoch-bound authority that CLOSES when the task settles.
-        spec_sha = sha256_file(task)
+        spec_sha = spec_sha256(task)
         forbidden = do_not_touch(body)
         authority = build_authority(
             task_id=task_id,
@@ -370,7 +371,7 @@ def main() -> int:
             return 0
 
         output.parent.mkdir(parents=True, exist_ok=True)
-        output.write_text(rendered, encoding="utf-8")
+        output.write_text(rendered, encoding="utf-8", newline="\n")
         # 7B — the task brief. Points at the project router when one exists;
         # never copies project doctrine in (auto-generated bulk measurably hurts).
         router = next(
@@ -387,7 +388,7 @@ def main() -> int:
                 profile_rel=profile_rel,
                 router_ref=router,
             ),
-            encoding="utf-8",
+            encoding="utf-8", newline="\n",
         )
         # 7C — the terrain pack, one per SWIMLANE.
         #
@@ -424,7 +425,7 @@ def main() -> int:
             payload = adapter_payload(adapter, profile_rel)
             (adapter_dir / f"{adapter}.json").write_text(
                 json.dumps(payload, indent=2, sort_keys=True) + "\n",
-                encoding="utf-8",
+                encoding="utf-8", newline="\n",
             )
         print(f"Runtime contract written: {profile_rel}")
 

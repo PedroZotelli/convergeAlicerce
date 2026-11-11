@@ -55,6 +55,17 @@
 #
 # Bash 3.2 compatible (stock macOS).
 set -uo pipefail
+# Windows: Python ends text lines with \r\n, and $(...) keeps the \r, so a captured
+# value such as a policy name silently fails comparisons. Normalize python3 stdout
+# to LF there; exit status is kept and stderr is untouched. Elsewhere nothing changes.
+case "$(uname -s)" in
+  MINGW*|MSYS*|CYGWIN*)
+    python3() {
+      command python3 "$@" | tr -d '\r'
+      return "${PIPESTATUS[0]}"
+    }
+    ;;
+esac
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 EVAL_RUNNER="$SCRIPT_DIR/run-issue-eval.sh"
@@ -355,7 +366,7 @@ if [ "$ISOLATION" = "worktree" ]; then
   # remainder is still absolute — which then gets appended to the worktree and
   # produces /worktree/private/var/... Compute the relation exactly instead.
   rel_to() {  # rel_to <path> <base> — realpath-based, so symlinks cannot lie
-    python3 -c 'import os,sys; print(os.path.relpath(os.path.realpath(sys.argv[1]), os.path.realpath(sys.argv[2])))' "$1" "$2"
+    python3 -c 'import os,sys; print(os.path.relpath(os.path.realpath(sys.argv[1]), os.path.realpath(sys.argv[2])).replace(os.sep, "/"))' "$1" "$2"
   }
   _rel_ws="$(rel_to "$ORIGINAL_WORKSPACE" "$GIT_ROOT")"
   _rel_tasks="$(rel_to "$RESOLVED_TASKS_DIR" "$ORIGINAL_WORKSPACE")"

@@ -12,7 +12,7 @@
 # The fix is not to force independent products onto one number. VERSION owns the
 # Converge package; Task-Spec is now an external engine with an explicit compatible
 # range. A Converge declaration must equal VERSION, and the engine boundary must
-# resolve to 3.8.x (release pin 3.8.0). 3.9.x writes absolute _state.yaml paths.
+# resolve to 3.10.x (release pin 3.10.0). 3.9.x writes absolute _state.yaml paths.
 #
 # WHAT COUNTS AS A VERSION HERE
 # RELEASE versions unify — they answer "which Converge is this?". SCHEMA/FORMAT
@@ -190,15 +190,15 @@ SCHEMA_OK=0
 REQUIRED="$(grep -m1 '^CVG_TASKSPEC_REQUIRED=' bin/cvg | cut -d'"' -f2)"
 TASKSPEC_VERSION_BIN="${TASKSPEC_BIN:-${CVG_TASKSPEC_BIN:-taskspec}}"
 ENGINE="$("$TASKSPEC_VERSION_BIN" version 2>/dev/null | tail -1 | tr -d '[:space:]')"
-if [ "$REQUIRED" = "3.8.0" ]; then
-  ok "Converge declares the Task-Spec 3.8.0 pin"
+if [ "$REQUIRED" = "3.10.0" ]; then
+  ok "Converge declares the Task-Spec 3.10.0 pin"
 else
-  bad "CVG_TASKSPEC_REQUIRED must declare the reviewed 3.8.0 pin"
+  bad "CVG_TASKSPEC_REQUIRED must declare the reviewed 3.10.0 pin"
   SCHEMA_OK=1
 fi
 case "$ENGINE" in
-  3.8.*) ok "installed Task-Spec engine is the supported 3.8.x pin ($ENGINE)" ;;
-  *) bad "installed Task-Spec engine is not 3.8.x ('$ENGINE') — 3.9.x writes absolute _state.yaml paths"; SCHEMA_OK=1 ;;
+  3.10.*) ok "installed Task-Spec engine is the supported 3.10.x pin ($ENGINE)" ;;
+  *) bad "installed Task-Spec engine is not 3.10.x ('$ENGINE') — 3.9.x writes absolute _state.yaml paths"; SCHEMA_OK=1 ;;
 esac
 
 echo

@@ -26,7 +26,7 @@ def main() -> int:
             stem = source.stem.lower().replace(" ", "-")
             input_path = output / f"{stem}-{index}.mmd"
             output_path = output / f"{stem}-{index}.png"
-            input_path.write_text(match.group(1).strip() + "\n", encoding="utf-8")
+            input_path.write_text(match.group(1).strip() + "\n", encoding="utf-8", newline="\n")
             command = [
                 "npx",
                 "--yes",

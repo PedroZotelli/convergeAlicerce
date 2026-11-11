@@ -24,6 +24,7 @@ from _runtime_contract import (
     run_signoff_gate,
     verify_signoff_pure,
     sha256_file,
+    spec_sha256,
     task_paths,
     unresolved_placeholder,
     validate_topology,
@@ -55,7 +56,7 @@ def main() -> int:
 
         task = profile_task_path(profile, repo)
         expected = profile.get("task", {}).get("spec_ref", {}).get("sha256")
-        actual = sha256_file(task)
+        actual = spec_sha256(task)
         if expected != actual:
             findings.append(
                 f"stale profile: Task-Spec hash mismatch ({expected} != {actual})"

@@ -19,7 +19,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-from scripts.utils import parse_skill_md
+from scripts.utils import cli_command, parse_skill_md
 
 
 def _call_claude(prompt: str, model: str | None, timeout: int = 300) -> str:
@@ -39,7 +39,7 @@ def _call_claude(prompt: str, model: str | None, timeout: int = 300) -> str:
     env = {k: v for k, v in os.environ.items() if k != "CLAUDECODE"}
 
     result = subprocess.run(
-        cmd,
+        cli_command(cmd),
         input=prompt,
         capture_output=True,
         text=True,

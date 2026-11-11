@@ -50,14 +50,10 @@ jobs:
           persist-credentials: false
 
       - name: install the pinned standalone Task-Spec engine
-        env:
-          GH_TOKEN: ${{ secrets.RELEASE_STACK_READ_TOKEN }}
         run: |
-          test -n "$GH_TOKEN" || { echo "::error::RELEASE_STACK_READ_TOKEN is required for private engine repositories"; exit 5; }
           engine_dir="$(mktemp -d -t task-spec-engine.XXXXXX)"
-          gh auth setup-git
-          git clone --quiet https://github.com/luanmorenommaciel/task-spec.git "$engine_dir"
-          git -C "$engine_dir" checkout --quiet --detach 0e6180cfc3009bd4ef9cf7ab050b463e10d4af91
+          git clone --quiet https://github.com/PedroZotelli/task-specLuan.git "$engine_dir"
+          git -C "$engine_dir" checkout --quiet --detach d5121f8c870448e3864eb7cb22160f0b720d7d36
           bash "$engine_dir/install.sh" --global --copy
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
           {
@@ -84,14 +80,10 @@ jobs:
           -r .github/requirements-ci.txt
 
       - name: install the pinned standalone Seamwise engine
-        env:
-          GH_TOKEN: ${{ secrets.RELEASE_STACK_READ_TOKEN }}
         run: |
-          test -n "$GH_TOKEN" || { echo "::error::RELEASE_STACK_READ_TOKEN is required for private engine repositories"; exit 5; }
           engine_dir="$(mktemp -d -t seamwise-engine.XXXXXX)"
-          gh auth setup-git
-          git clone --quiet https://github.com/luanmorenommaciel/seamwise.git "$engine_dir"
-          git -C "$engine_dir" checkout --quiet --detach 5a398169c3fefcb65eb1a47c0cb4f967dfdc0515
+          git clone --quiet https://github.com/PedroZotelli/seamwiseLuan.git "$engine_dir"
+          git -C "$engine_dir" checkout --quiet --detach 862a90ad38a37a250af2d96c0fc2c3c2f8149519
           python -m pip install --disable-pip-version-check "$engine_dir"
           test "$(seamwise --version)" = "seamwise, version 0.2.0"
           {
@@ -174,7 +166,7 @@ jobs:
 
       - name: standalone Task-Spec boundary
         run: |
-          test "$(taskspec version)" = "3.8.0"
+          test "$(taskspec version)" = "3.10.0"
           taskspec demo | tee /tmp/taskspec-demo.txt
           grep -q '^DEMO=READY$' /tmp/taskspec-demo.txt
 
@@ -340,14 +332,10 @@ jobs:
           persist-credentials: false
 
       - name: install the pinned standalone Task-Spec engine
-        env:
-          GH_TOKEN: ${{ secrets.RELEASE_STACK_READ_TOKEN }}
         run: |
-          test -n "$GH_TOKEN" || { echo "::error::RELEASE_STACK_READ_TOKEN is required for private engine repositories"; exit 5; }
           engine_dir="$(mktemp -d -t task-spec-engine.XXXXXX)"
-          gh auth setup-git
-          git clone --quiet https://github.com/luanmorenommaciel/task-spec.git "$engine_dir"
-          git -C "$engine_dir" checkout --quiet --detach 0e6180cfc3009bd4ef9cf7ab050b463e10d4af91
+          git clone --quiet https://github.com/PedroZotelli/task-specLuan.git "$engine_dir"
+          git -C "$engine_dir" checkout --quiet --detach d5121f8c870448e3864eb7cb22160f0b720d7d36
           bash "$engine_dir/install.sh" --global --copy
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
 
@@ -449,19 +437,15 @@ jobs:
           fi
 
       - name: install exact external engine candidates
-        env:
-          GH_TOKEN: ${{ secrets.RELEASE_STACK_READ_TOKEN }}
         run: |
-          test -n "$GH_TOKEN" || { echo "::error::RELEASE_STACK_READ_TOKEN is required for private engine repositories"; exit 5; }
           taskspec_dir="$(mktemp -d -t task-spec-engine.XXXXXX)"
           seamwise_dir="$(mktemp -d -t seamwise-engine.XXXXXX)"
-          gh auth setup-git
-          git clone --quiet https://github.com/luanmorenommaciel/task-spec.git "$taskspec_dir"
-          git -C "$taskspec_dir" checkout --quiet --detach 0e6180cfc3009bd4ef9cf7ab050b463e10d4af91
+          git clone --quiet https://github.com/PedroZotelli/task-specLuan.git "$taskspec_dir"
+          git -C "$taskspec_dir" checkout --quiet --detach d5121f8c870448e3864eb7cb22160f0b720d7d36
           bash "$taskspec_dir/install.sh" --global --copy
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
-          git clone --quiet https://github.com/luanmorenommaciel/seamwise.git "$seamwise_dir"
-          git -C "$seamwise_dir" checkout --quiet --detach 5a398169c3fefcb65eb1a47c0cb4f967dfdc0515
+          git clone --quiet https://github.com/PedroZotelli/seamwiseLuan.git "$seamwise_dir"
+          git -C "$seamwise_dir" checkout --quiet --detach 862a90ad38a37a250af2d96c0fc2c3c2f8149519
           python -m pip install --disable-pip-version-check "$seamwise_dir"
           {
             printf 'CVG_TASKSPEC_BIN=%s/.local/bin/taskspec\n' "$HOME"

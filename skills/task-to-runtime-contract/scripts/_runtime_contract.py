@@ -8,7 +8,9 @@ import hashlib
 import json
 import os
 import re
+import shutil
 import subprocess
+import sys
 from pathlib import Path
 from typing import Any, Iterable
 
@@ -19,8 +21,72 @@ PERMISSIONS = {"read-only", "scoped-write"}
 SUPPORTED_RUNTIMES = frozenset({"claude", "codex", "kimi"})
 
 
+def bash_executable() -> str:
+    """The bash that runs engine scripts: "bash" off Windows, Git Bash's full path on it.
+
+    Windows looks for a bare program name in System32 before PATH, and
+    System32\\bash.exe is the WSL launcher, so a bare "bash" can start WSL.
+    """
+    if sys.platform != "win32":
+        return "bash"
+
+    def is_wsl_launcher(path: str) -> bool:
+        lowered = path.replace("/", "\\").lower()
+        return any(part in lowered for part in ("\\windows\\system32\\", "\\windows\\syswow64\\", "\\windowsapps\\"))
+
+    found = shutil.which("bash")
+    if found and not is_wsl_launcher(found):
+        return found
+    git = shutil.which("git")
+    if git:
+        for root in list(Path(git).resolve().parents)[:3]:
+            for relative in ("bin/bash.exe", "usr/bin/bash.exe"):
+                candidate = root / relative
+                if candidate.is_file():
+                    return str(candidate)
+    raise FileNotFoundError("Git for Windows bash was not found; install Git for Windows")
+
+
+def engine_argv(command: list[str]) -> list[str]:
+    """Return an engine command that Windows can start; elsewhere it is unchanged.
+
+    Windows starts only .exe/.com/.cmd/.bat files: a bare name does not find an
+    extensionless engine such as taskspec, and a shebang script raises WinError
+    193. The script is handed to the interpreter its shebang names.
+    """
+    if sys.platform != "win32" or not command:
+        return command
+    program = command[0]
+    if not os.path.isfile(program):
+        program = shutil.which(program) or next(
+            (os.path.join(folder, program) for folder in os.environ.get("PATH", "").split(os.pathsep)
+             if folder and os.path.isfile(os.path.join(folder, program))),
+            program,
+        )
+    if not os.path.isfile(program) or os.path.splitext(program)[1].lower() in {".exe", ".com", ".cmd", ".bat"}:
+        return [program, *command[1:]]
+    with open(program, "rb") as handle:
+        first = handle.readline().decode("utf-8", "replace")
+    words = first[2:].split() if first.startswith("#!") else []
+    name = os.path.basename(words[-1] if words and words[0].endswith("/env") else (words[0] if words else ""))
+    if name.startswith("python"):
+        return [sys.executable, program, *command[1:]]
+    if name in {"bash", "sh"}:
+        return [bash_executable(), program, *command[1:]]
+    return [program, *command[1:]]
+
+
 class ContractError(Exception):
     pass
+
+
+def spec_sha256(path: Path) -> str:
+    """Digest of a Task-Spec's content, independent of CRLF or LF line endings.
+
+    The same committed spec reaches a Windows checkout as CRLF and a file a tool
+    wrote as LF; a byte digest would call one of them stale. Content changes still
+    change the digest; only the line-ending representation does not."""
+    return hashlib.sha256(path.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
 
 
 def sha256_file(path: Path) -> str:
@@ -281,7 +347,7 @@ def verify_signoff_pure(task: Path, repo: Path, tool_home: Path) -> tuple[int, s
     engine = os.environ.get("CVG_TASKSPEC_BIN") or os.environ.get("TASKSPEC_BIN", "taskspec")
     try:
         proc = subprocess.run(
-            [engine, "--json", "status", str(task)],
+            engine_argv([engine, "--json", "status", str(task)]),
             cwd=repo,
             text=True,
             capture_output=True,
@@ -309,7 +375,7 @@ def run_signoff_gate(
         command.append("--require-tier1")
     command.append(str(task))
     try:
-        proc = subprocess.run(command, cwd=repo, text=True, capture_output=True, check=False)
+        proc = subprocess.run(engine_argv(command), cwd=repo, text=True, capture_output=True, check=False)
     except OSError as exc:
         raise ContractError(f"Task-Spec engine unavailable: {exc}") from exc
     output = (proc.stdout + "\n" + proc.stderr).strip()

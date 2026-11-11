@@ -16,7 +16,10 @@ sequences (`- item` lines), no multi-line plain scalars, no nesting deeper
 than one level.
 """
 
+import os
 import re
+import shutil
+import sys
 from pathlib import Path
 
 
@@ -27,6 +30,37 @@ class FrontmatterError(ValueError):
 _INT_RE = re.compile(r"[-+]?\d+$")
 _FLOAT_RE = re.compile(r"[-+]?(\d+\.\d*|\.\d+)$")
 _BLOCK_INDICATORS = ("|", ">", "|-", ">-", "|+", ">+")
+
+
+def cli_command(cmd: list) -> list:
+    """Return a CLI command that Windows can start; elsewhere it is unchanged.
+
+    Windows finds npm's claude.cmd only through PATHEXT, and it cannot start a
+    shebang script (such as a test's fake CLI) by itself, so the script is handed
+    to Git Bash or to this Python. A bare "bash" is avoided: Windows looks in
+    System32, where bash.exe is the WSL launcher, before PATH.
+    """
+    if sys.platform != "win32" or not cmd:
+        return cmd
+    program = cmd[0] if os.path.isfile(cmd[0]) else (shutil.which(cmd[0]) or cmd[0])
+    if not os.path.isfile(program) or os.path.splitext(program)[1].lower() in {".exe", ".com", ".cmd", ".bat"}:
+        return [program, *cmd[1:]]
+    with open(program, "rb") as handle:
+        first = handle.readline().decode("utf-8", "replace")
+    words = first[2:].split() if first.startswith("#!") else []
+    name = os.path.basename(words[-1] if words and words[0].endswith("/env") else (words[0] if words else ""))
+    if name.startswith("python"):
+        return [sys.executable, program, *cmd[1:]]
+    if name in {"bash", "sh"}:
+        bash = shutil.which("bash")
+        system = ("\\windows\\system32\\", "\\windowsapps\\")
+        if not bash or any(part in bash.lower() for part in system):
+            git = shutil.which("git")
+            roots = list(Path(git).resolve().parents)[:3] if git else []
+            bash = next((str(r / rel) for r in roots for rel in ("bin/bash.exe", "usr/bin/bash.exe")
+                         if (r / rel).is_file()), "bash")
+        return [bash, program, *cmd[1:]]
+    return [program, *cmd[1:]]
 
 
 def _parse_scalar(value: str):

@@ -16,7 +16,7 @@ import uuid
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from pathlib import Path
 
-from scripts.utils import parse_skill_md
+from scripts.utils import cli_command, parse_skill_md
 
 
 def find_project_root() -> Path:
@@ -83,7 +83,7 @@ def run_single_query(
         env = {k: v for k, v in os.environ.items() if k != "CLAUDECODE"}
 
         process = subprocess.Popen(
-            cmd,
+            cli_command(cmd),
             stdout=subprocess.PIPE,
             stderr=subprocess.DEVNULL,
             cwd=project_root,
@@ -193,6 +193,9 @@ def run_eval(
     model: str | None = None,
 ) -> dict:
     """Run the full eval set and return results."""
+    if sys.platform == "win32":
+        # Streaming reads use select() on pipes, which Windows supports only for sockets.
+        raise SystemExit("run_eval needs Linux or macOS: it streams claude output with select() on pipes")
     results = []
 
     with ProcessPoolExecutor(max_workers=num_workers) as executor:

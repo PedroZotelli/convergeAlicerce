@@ -42,7 +42,9 @@ bad() { printf '  FAIL — %s\n' "$1"; FAILED=$((FAILED + 1)); }
 #   explains it    : docs
 #   brand          : assets
 ALLOWED_DIRS=".claude-plugin .cvg .github apps assets bin contracts docs evidence scripts skills templates tests"
-ALLOWED_FILES=".briefspec.toml .gitattributes .gitignore .npmignore CHANGELOG.md CLAUDE.md CONTRIBUTING.md LICENSE Makefile README.md VERSION install.sh package.json"
+# AGENTS.md and OPERATING.md are agent and operator guides; NOTICE credits the original
+# authors of this fork.
+ALLOWED_FILES=".briefspec.toml .gitattributes .gitignore .npmignore AGENTS.md CHANGELOG.md CLAUDE.md CONTRIBUTING.md LICENSE Makefile NOTICE OPERATING.md README.md VERSION install.sh package.json"
 
 # Directories whose purpose must be stated in a README next to the files.
 README_REQUIRED="assets bin contracts docs evidence scripts skills templates tests"

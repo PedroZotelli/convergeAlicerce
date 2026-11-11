@@ -220,7 +220,7 @@ else:
     live = sorted(f for d, _ in LANES for f in glob.glob(os.path.join(d, "*.md")))
     stale, unseen = [], []
     for f in live:
-        rel = os.path.relpath(f, sketch)
+        rel = os.path.relpath(f, sketch).replace(os.sep, "/")  # the log's portable form
         want = inputs.get(rel) if rel in inputs else inputs.get(f)
         if want is None:
             unseen.append(rel); continue

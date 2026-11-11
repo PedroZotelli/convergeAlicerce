@@ -174,7 +174,7 @@ if judg is None:
 inputs = []
 for f in sorted(glob.glob(os.path.join(sketch, "*", "*.md"))):
     if os.path.basename(os.path.dirname(f)).startswith("."): continue
-    rel = os.path.relpath(f, sketch)
+    rel = os.path.relpath(f, sketch).replace(os.sep, "/")  # portable across OSes
     inputs.append({"path": rel, "sha256": hashlib.sha256(open(f, "rb").read()).hexdigest()})
 prompt_sha = hashlib.sha256(open(os.environ.get("CVG_PROMPT", "/dev/null"), "rb").read()).hexdigest() if os.environ.get("CVG_PROMPT") else ""
 

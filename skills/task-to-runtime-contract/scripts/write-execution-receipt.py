@@ -17,6 +17,7 @@ from _runtime_contract import (
     resolve_inside_repo,
     resolve_repo,
     sha256_file,
+    spec_sha256,
     verify_signoff_pure,
 )
 
@@ -77,7 +78,7 @@ def main() -> int:
         if not task_id:
             raise ContractError("profile has no task id")
         expected_spec_hash = profile["task"]["spec_ref"]["sha256"]
-        spec_hash = sha256_file(task)
+        spec_hash = spec_sha256(task)
         post_hoc = False
         if spec_hash != expected_spec_hash:
             if not args.post_hoc:
@@ -140,7 +141,7 @@ def main() -> int:
             )
             if not archive.exists():
                 archive.write_bytes(previous)
-        output.write_text(rendered, encoding="utf-8")
+        output.write_text(rendered, encoding="utf-8", newline="\n")
         print(f"Execution receipt written: {relpath(output, repo)}")
         print("EXECUTION_RECEIPT=PASS" if args.result == "pass" else "EXECUTION_RECEIPT=BLOCKED")
         return 0

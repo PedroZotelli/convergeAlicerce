@@ -32,6 +32,17 @@
 # bash-3.2-safe (macOS system bash): no mapfile, no `declare -A`, awk/grep/sed only.
 
 set -euo pipefail
+# Windows: Python ends text lines with \r\n, and $(...) keeps the \r, so a captured
+# value such as a policy name silently fails comparisons. Normalize python3 stdout
+# to LF there; exit status is kept and stderr is untouched. Elsewhere nothing changes.
+case "$(uname -s)" in
+  MINGW*|MSYS*|CYGWIN*)
+    python3() {
+      command python3 "$@" | tr -d '\r'
+      return "${PIPESTATUS[0]}"
+    }
+    ;;
+esac
 
 # ----- Resolve this script's dir + the skill root -----
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

@@ -22,7 +22,61 @@ the standalone repository.
 
 ---
 
-## [Unreleased]
+## [0.3.0] — 2026-11-11
+
+First release of Pedro Zotelli's own line of this fork,
+https://github.com/PedroZotelli/convergeLuan, paired with Task-Spec 3.10.0 and
+Seamwise 0.3.0 from the sibling forks. Authorship of the original work stays with
+Luan Moreno Medeiros Maciel; see `NOTICE`. This release also carries the changes
+listed under Removed, which were unreleased upstream.
+
+### Changed
+- **Release pairing is Task-Spec 3.10.0 and Seamwise 0.3.0.** Task-Spec 3.10.0
+  always writes repository-relative `path:` entries in `_state.yaml`, which is
+  the defect that made 3.9.x unusable.
+- **Task-Spec 3.9.x is now refused by the code, not only by the docs.**
+  `bin/cvg` and `install.sh` used to accept 3.9.x while the documentation said
+  it was rejected; they now accept 3.8.x or 3.10.0 and later, below 4.0.0.
+- **Every engine, install door, and workflow points to the forks**, which are
+  public: the CI and release workflows clone them without a token, and
+  `scripts/bootstrap.sh` clones them too.
+
+### Fixed
+- **Windows (Git Bash) support.** Python writes every text file with LF, Python
+  children run in UTF-8 mode, the bootstrap and Makefile use the Windows
+  virtualenv layout (`Scripts/*.exe`), and `install.sh --symlink` creates real
+  Windows symlinks or stops with a clear error instead of silently copying.
+- **Line endings are pinned to LF** in `.gitattributes`, so CRLF checkouts no
+  longer break shell scripts or hashed files.
+- **A reviewed plan edited after consent now reopens the barrier on Windows.**
+  `next` compared the log's `core/_lane.md` with Windows' `core\_lane.md`, matched
+  nothing, and treated the plan as unreviewed: the staleness check failed open.
+  Review logs now record and compare forward-slash paths on every OS, so a log
+  written on one system is checked correctly on another.
+- **The Task-Spec digest ignores line endings.** An isolated worktree checks the
+  committed spec out as CRLF under `core.autocrlf`, and a byte digest called the
+  same spec stale. `spec_sha256` hashes content with CRLF normalized; any content
+  change still changes it (`run-tests.sh` proves both on every OS).
+- **Engines start on Windows.** Shebang engines (`taskspec`) go to Git Bash by its
+  full path, npm `.cmd` shims are found, and a bare `bash` is never used: Windows
+  looks in System32, where `bash.exe` is the WSL launcher, before PATH.
+- **A tier-2 judge timeout stops every descendant on Windows** through a Job
+  Object, the counterpart of `killpg`; helpers re-parented by Git Bash used to keep
+  the pipes open for the full sleep.
+- **The project root resolves correctly on Windows.** `resolve_project_root`
+  compares directories with `-ef` (Git reports `C:/...`, `pwd` says `/tmp/...`) and
+  never builds `//cvg`, which Windows reads as a network path.
+- **`cvg snapshot` no longer writes into the project on Windows.** Its minimal
+  child environment lacked `SYSTEMDRIVE`, so a system component created a literal
+  `%SystemDrive%` directory, with caches, inside the user's repository.
+- **Shell scripts read Python output without a stray `\r`**, which made policies
+  such as `external_writes: allow` never match on Windows.
+- **Compose accepts Seamwise 0.3.x**, the paired release (0.2.x still works).
+- Tests no longer depend on the developer's Git configuration, POSIX mode bits,
+  or unprivileged symlinks; where Windows lacks a feature, the case is skipped
+  with its reason, and directory links use junctions, which any user can create.
+- `skill-creator` finds npm's `claude.cmd`; its `run_eval` states that it needs
+  Linux or macOS (it streams with `select()` on pipes) instead of failing obscurely.
 
 ### Removed
 - **The previous product-prose tree under `docs/` is gone.** Architecture,

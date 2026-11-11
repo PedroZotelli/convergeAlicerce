@@ -99,14 +99,14 @@ def main() -> int:
             print(f"{proposed.name} already proposed (unchanged)")
             print("SETUP_HARNESS=UNCHANGED")
             return 0
-        proposed.write_text(body, encoding="utf-8")
+        proposed.write_text(body, encoding="utf-8", newline="\n")
         print(f"{target.name} exists and was NOT modified.")
         print(f"Proposed a router scaffold beside it: {proposed.name}")
         print("Diff them, keep what you want, then delete the .proposed file.")
         print("SETUP_HARNESS=PROPOSED")
         return 0
 
-    target.write_text(body, encoding="utf-8")
+    target.write_text(body, encoding="utf-8", newline="\n")
     print(f"Router scaffold written: {target.name}")
     print("Fill the TODO and the commands block — a model cannot infer those.")
     print("Keep it under ~50 lines; per-task detail belongs to Pass 7B, not here.")

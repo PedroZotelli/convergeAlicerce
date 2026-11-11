@@ -98,7 +98,7 @@ class GateGitIntegrationTests(unittest.TestCase):
         self._git("config", "user.email", "gate@test.invalid")
         self._git("config", "user.name", "Gate Test")
         (self.repo / ".cvg").mkdir()
-        (self.repo / ".cvg/gate.yaml").write_text(POLICY_V2, encoding="utf-8")
+        (self.repo / ".cvg/gate.yaml").write_text(POLICY_V2, encoding="utf-8", newline="\n")
 
     def tearDown(self) -> None:
         self.temp.cleanup()
@@ -157,9 +157,9 @@ class GateGitIntegrationTests(unittest.TestCase):
 
     def test_task_cannot_introduce_policy_when_base_has_no_gate(self) -> None:
         (self.repo / ".cvg/gate.yaml").unlink()
-        (self.repo / "README.md").write_text("base\n", encoding="utf-8")
+        (self.repo / "README.md").write_text("base\n", encoding="utf-8", newline="\n")
         base = self._commit_all()
-        (self.repo / ".cvg/gate.yaml").write_text(POLICY_V2, encoding="utf-8")
+        (self.repo / ".cvg/gate.yaml").write_text(POLICY_V2, encoding="utf-8", newline="\n")
         result = self._run(
             CHECK_PATH,
             "--repo",
@@ -185,7 +185,7 @@ class GateGitIntegrationTests(unittest.TestCase):
 
     def test_rename_reports_the_protected_source_endpoint(self) -> None:
         (self.repo / "auth").mkdir()
-        (self.repo / "auth/secret.txt").write_text("secret\n", encoding="utf-8")
+        (self.repo / "auth/secret.txt").write_text("secret\n", encoding="utf-8", newline="\n")
         base = self._commit_all()
         self._git("mv", "auth/secret.txt", "safe.txt")
         result = self._run(
@@ -202,10 +202,10 @@ class GateGitIntegrationTests(unittest.TestCase):
     def test_whole_repo_diff_rejects_changes_outside_nested_project(self) -> None:
         project = self.repo / "project"
         project.mkdir()
-        (project / "inside.txt").write_text("inside\n", encoding="utf-8")
-        (self.repo / "outside.txt").write_text("base\n", encoding="utf-8")
+        (project / "inside.txt").write_text("inside\n", encoding="utf-8", newline="\n")
+        (self.repo / "outside.txt").write_text("base\n", encoding="utf-8", newline="\n")
         base = self._commit_all()
-        (self.repo / "outside.txt").write_text("changed\n", encoding="utf-8")
+        (self.repo / "outside.txt").write_text("changed\n", encoding="utf-8", newline="\n")
         result = self._run(
             CHECK_PATH,
             "--repo",

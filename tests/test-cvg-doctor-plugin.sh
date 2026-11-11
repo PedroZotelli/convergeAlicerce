@@ -19,6 +19,9 @@
 # bash 3.2 safe. Deps: git, python3.
 
 set -uo pipefail
+# Hermetic Git: the developer's core.autocrlf must not change the bytes a clone
+# checks out, or a byte-identical install would read as stale.
+export GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=core.autocrlf GIT_CONFIG_VALUE_0=false
 
 SELF_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO="$(cd "$SELF_DIR/.." && pwd)"

@@ -16,9 +16,23 @@
 # Portability: macOS system bash 3.2.
 
 set -euo pipefail
+# Windows: Python ends text lines with \r\n, and $(...) keeps the \r, so a captured
+# value such as a policy name silently fails comparisons. Normalize python3 stdout
+# to LF there; exit status is kept and stderr is untouched. Elsewhere nothing changes.
+case "$(uname -s)" in
+  MINGW*|MSYS*|CYGWIN*)
+    python3() {
+      command python3 "$@" | tr -d '\r'
+      return "${PIPESTATUS[0]}"
+    }
+    ;;
+esac
+# UTF-8 for every Python child: Windows consoles default to a legacy code page.
+: "${PYTHONUTF8:=1}"
+export PYTHONUTF8
 
-CVG_VERSION="0.2.0"
-CVG_TASKSPEC_REQUIRED="3.8.0"
+CVG_VERSION="0.3.0"
+CVG_TASKSPEC_REQUIRED="3.10.0"
 
 # Resolve THIS script through any symlink chain before locating its companions.
 # Development installs may put a symlink on PATH, so `dirname "$0"` can be the
@@ -101,7 +115,8 @@ resolve_project_root() {
   dir="$start"
   git_root="$(git -C "$start" rev-parse --show-toplevel 2>/dev/null || true)"
   while :; do
-    if [ -d "$dir/.cvg" ] || [ -d "$dir/cvg/tasks" ] || [ -f "$dir/cvg/INDEX.md" ]; then
+    # ${dir%/} keeps "/" from becoming "//cvg", a network (UNC) path on Windows.
+    if [ -d "${dir%/}/.cvg" ] || [ -d "${dir%/}/cvg/tasks" ] || [ -f "${dir%/}/cvg/INDEX.md" ]; then
       printf '%s\n' "$dir"
       return 0
     fi
@@ -112,7 +127,9 @@ resolve_project_root() {
       (cd "$dir/.." && pwd)
       return 0
     fi
-    [ -n "$git_root" ] && [ "$dir" = "$git_root" ] && break
+    # -ef compares the directories themselves: Git reports C:/... on Windows
+    # while pwd says /tmp/..., and macOS mixes /var with /private/var.
+    [ -n "$git_root" ] && [ "$dir" -ef "$git_root" ] && break
     [ "$dir" = "/" ] && break
     parent="$(dirname "$dir")"
     [ "$parent" = "$dir" ] && break
@@ -141,9 +158,13 @@ resolve_taskspec() {
   fi
   version="$("$candidate" version 2>/dev/null | tail -1 | tr -d '[:space:]')"
   case "$version" in
-    3.8.*|3.9.*|3.[1-9][0-9].*) ;;
+    3.8.*|3.[1-9][0-9].*) ;;
+    3.9.*)
+      ui_err "incompatible Task-Spec engine '$version' at $candidate — 3.9.x writes an absolute path: into _state.yaml; install $CVG_TASKSPEC_REQUIRED"
+      return 1
+      ;;
     *)
-      ui_err "incompatible Task-Spec engine '$version' at $candidate — Converge 0.2 requires >=3.8.0 and <4.0.0"
+      ui_err "incompatible Task-Spec engine '$version' at $candidate — Converge 0.3 requires 3.8.x or >=3.10.0 and <4.0.0"
       return 1
       ;;
   esac

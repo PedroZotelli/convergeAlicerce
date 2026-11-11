@@ -1,5 +1,11 @@
 SHELL := /bin/bash
 
+# Windows (Git Bash): Python defaults to a legacy code page there; tests assume UTF-8,
+# as on Linux and macOS.
+ifeq ($(OS),Windows_NT)
+export PYTHONUTF8 := 1
+endif
+
 REPO_ROOT := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
 
 # Resolve an engine to an ABSOLUTE path. tests/test-cvg-doctor-host.sh narrows
@@ -13,8 +19,14 @@ abs_engine = $(if $(filter /%,$(1)),$(1),$(shell command -v $(1) 2>/dev/null || 
 # .venv/. Prefer those when they exist so a bootstrapped clone needs no exports;
 # an explicit CVG_* override still wins, and PATH remains the last resort.
 BOOTSTRAP_TASKSPEC := $(REPO_ROOT)/.engines/task-spec/bin/taskspec
+# A Windows virtualenv keeps its programs in Scripts/ and names them *.exe.
+ifeq ($(OS),Windows_NT)
+BOOTSTRAP_SEAMWISE := $(REPO_ROOT)/.venv/Scripts/seamwise.exe
+BOOTSTRAP_PYTHON   := $(REPO_ROOT)/.venv/Scripts/python.exe
+else
 BOOTSTRAP_SEAMWISE := $(REPO_ROOT)/.venv/bin/seamwise
 BOOTSTRAP_PYTHON   := $(REPO_ROOT)/.venv/bin/python
+endif
 
 ifeq ($(origin TASKSPEC_BIN),undefined)
 TASKSPEC_BIN := $(call abs_engine,$(if $(CVG_TASKSPEC_BIN),$(CVG_TASKSPEC_BIN),$(if $(wildcard $(BOOTSTRAP_TASKSPEC)),$(BOOTSTRAP_TASKSPEC),taskspec)))
@@ -38,7 +50,7 @@ export CVG_SEAMWISE_BIN := $(SEAMWISE_BIN)
 export PYTHONDONTWRITEBYTECODE := 1
 
 # Some cvg subcommands re-enter the CLI (`cvg snapshot` shells out to `cvg next`)
-# and resolve the engine through PATH rather than CVG_TASKSPEC_BIN. With the 3.8.x
+# and resolve the engine through PATH rather than CVG_TASKSPEC_BIN. With the 3.10.x
 # pin in bin/cvg, a 3.9.x on PATH is rejected there and the failure surfaces as an
 # unrelated snapshot error. CI avoids this by putting the pinned engine on PATH
 # ($GITHUB_PATH); this does the same locally so a bootstrapped run matches CI.

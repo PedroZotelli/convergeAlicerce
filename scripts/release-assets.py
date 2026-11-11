@@ -51,10 +51,10 @@ def main() -> int:
     parser.add_argument("--product-commit", default="")
     parser.add_argument("--evidence-commit", default="")
     parser.add_argument(
-        "--taskspec-commit", default="0e6180cfc3009bd4ef9cf7ab050b463e10d4af91"
+        "--taskspec-commit", default="d5121f8c870448e3864eb7cb22160f0b720d7d36"
     )
     parser.add_argument(
-        "--seamwise-commit", default="5a398169c3fefcb65eb1a47c0cb4f967dfdc0515"
+        "--seamwise-commit", default="862a90ad38a37a250af2d96c0fc2c3c2f8149519"
     )
     args = parser.parse_args()
 
@@ -88,7 +88,7 @@ def main() -> int:
     manifest = {
         "contract": "ConvergeReleaseManifest/v1",
         "product": "converge",
-        "version": "0.2.0",
+        "version": "0.3.0",
         "source": {
             "commit": args.source_commit,
             "ref": args.source_ref,
@@ -98,12 +98,12 @@ def main() -> int:
         "dependencies": [
             {
                 "product": "task-spec",
-                "version": "3.8.0",
+                "version": "3.10.0",
                 "commit": args.taskspec_commit,
             },
             {
                 "product": "seamwise",
-                "version": "0.2.0",
+                "version": "0.3.0",
                 "commit": args.seamwise_commit,
             },
         ],
@@ -111,10 +111,10 @@ def main() -> int:
         "ci": {"run_url": args.ci_run_url},
     }
     (args.out / "release-manifest.json").write_text(
-        json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+        json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8", newline="\n"
     )
     (args.out / "SHA256SUMS").write_text(
-        "\n".join(checksum_lines) + "\n", encoding="utf-8"
+        "\n".join(checksum_lines) + "\n", encoding="utf-8", newline="\n"
     )
     return 0
 

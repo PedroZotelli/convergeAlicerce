@@ -16,8 +16,8 @@ engines and pins them to exact commits:
 
 | Engine | Version | Commit |
 |---|---|---|
-| Task-Spec | 3.8.0 | `0e6180cfc3009bd4ef9cf7ab050b463e10d4af91` |
-| Seamwise | 0.2.0 | `5a398169c3fefcb65eb1a47c0cb4f967dfdc0515` |
+| Task-Spec | 3.10.0 | `d5121f8c870448e3864eb7cb22160f0b720d7d36` |
+| Seamwise | 0.3.0 | `862a90ad38a37a250af2d96c0fc2c3c2f8149519` |
 
 Task-Spec 3.9.x is **rejected on purpose**: its `rebuild-state` writes an
 absolute `path:` into `cvg/tasks/_state.yaml`, which is committed and must stay
