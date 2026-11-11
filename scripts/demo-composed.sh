@@ -323,7 +323,11 @@ ACCEPTANCE_RECORD="$(find "$ROOM/cvg/.taskspec/acceptance/$SPEC_ID" -type f -nam
 cp "$ACCEPTANCE_RECORD" "$EVIDENCE/acceptance-record.json"
 git -C "$ROOM" status --short > "$EVIDENCE/final-git-status.txt"
 
-python3 - "$EVIDENCE" "$ROOM" "$TASKSPEC_BIN" "$SEAMWISE_BIN" "$DEMO_AGENT" \
+# Versions are read here, in bash: native Windows Python cannot start the shebang
+# `taskspec` launcher by itself.
+TASKSPEC_VERSION_OUT="$("$TASKSPEC_BIN" version)" || die evidence_manifest_failed
+SEAMWISE_VERSION_OUT="$("$SEAMWISE_BIN" --version)" || die evidence_manifest_failed
+python3 - "$EVIDENCE" "$ROOM" "$TASKSPEC_VERSION_OUT" "$SEAMWISE_VERSION_OUT" "$DEMO_AGENT" \
   "$TASKSPEC_SOURCE_COMMIT" "$SEAMWISE_SOURCE_COMMIT" <<'PY' || die evidence_manifest_failed
 import hashlib
 import json
@@ -333,8 +337,8 @@ import sys
 
 evidence = pathlib.Path(sys.argv[1])
 room = pathlib.Path(sys.argv[2])
-taskspec = sys.argv[3]
-seamwise = sys.argv[4]
+taskspec_version = sys.argv[3].strip().splitlines()[-1]
+seamwise_version = sys.argv[4].strip()
 agent = sys.argv[5]
 taskspec_commit = sys.argv[6]
 seamwise_commit = sys.argv[7]
@@ -364,8 +368,8 @@ environment = {
     "contract": "ComposedDemoEnvironment/v1",
     "versions": {
         "converge": "0.3.0",
-        "task_spec": output([taskspec, "version"]),
-        "seamwise": output([seamwise, "--version"]),
+        "task_spec": taskspec_version,
+        "seamwise": seamwise_version,
         "executor": output(["codex", "--version"]) if agent == "codex" else "deterministic-fixture/v1",
     },
     "release_candidate_commits": {

@@ -85,7 +85,7 @@ jobs:
           git clone --quiet https://github.com/PedroZotelli/seamwiseAlicerce.git "$engine_dir"
           git -C "$engine_dir" checkout --quiet --detach 862a90ad38a37a250af2d96c0fc2c3c2f8149519
           python -m pip install --disable-pip-version-check "$engine_dir"
-          test "$(seamwise --version)" = "seamwise, version 0.2.0"
+          test "$(seamwise --version)" = "seamwise, version 0.3.0"
           {
             printf 'CVG_SEAMWISE_BIN=%s\n' "$(command -v seamwise)"
             printf 'CVG_SEAMWISE_SOURCE_ROOT=%s\n' "$engine_dir"
