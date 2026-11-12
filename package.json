@@ -44,10 +44,10 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/PedroZotelli/convergeLuan.git"
+    "url": "git+https://github.com/PedroZotelli/convergeAlicerce.git"
   },
-  "homepage": "https://github.com/PedroZotelli/convergeLuan#readme",
-  "bugs": "https://github.com/PedroZotelli/convergeLuan/issues",
+  "homepage": "https://github.com/PedroZotelli/convergeAlicerce#readme",
+  "bugs": "https://github.com/PedroZotelli/convergeAlicerce/issues",
   "keywords": [
     "agentic",
     "task-spec",

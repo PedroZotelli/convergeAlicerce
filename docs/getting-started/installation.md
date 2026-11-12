@@ -22,27 +22,27 @@ Task-Spec 3.9.x is rejected on purpose: `rebuild-state` writes an absolute
 ## Install in dependency order
 
 ```bash
-git clone --branch v3.10.0 https://github.com/PedroZotelli/task-specLuan.git
-bash task-specLuan/install.sh --global --copy
+git clone --branch v3.10.0 https://github.com/PedroZotelli/task-specAlicerce.git
+bash task-specAlicerce/install.sh --global --copy
 taskspec demo
 
 python3 -m pip install \
-  "git+https://github.com/PedroZotelli/seamwiseLuan.git@v0.3.0"
+  "git+https://github.com/PedroZotelli/seamwiseAlicerce.git@v0.3.0"
 
-git clone --branch v0.3.0 https://github.com/PedroZotelli/convergeLuan.git
-bash convergeLuan/install.sh --target /absolute/path/to/your-project --copy
+git clone --branch v0.3.0 https://github.com/PedroZotelli/convergeAlicerce.git
+bash convergeAlicerce/install.sh --target /absolute/path/to/your-project --copy
 ```
 
 Other Converge doors:
 
 ```bash
-npm install -g github:PedroZotelli/convergeLuan
+npm install -g github:PedroZotelli/convergeAlicerce
 cvg-install
 ```
 
 ```bash
 CVG_REF=v0.3.0 bash -c "$(curl -fsSL \
-  https://raw.githubusercontent.com/PedroZotelli/convergeLuan/main/install.sh)"
+  https://raw.githubusercontent.com/PedroZotelli/convergeAlicerce/main/install.sh)"
 ```
 
 `install.sh` fails if `taskspec` is missing, 3.9.x, or outside 3.8 to 3.x. Copy mode pins

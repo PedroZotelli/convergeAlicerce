@@ -11,6 +11,13 @@ Every declaration in the package must equal it, and
 checks the compatible Task-Spec engine range. Converge release versions unify;
 Task-Spec releases and schema/format versions deliberately do not.
 
+## [Unreleased]
+
+### Changed
+
+- The repository is now `PedroZotelli/convergeAlicerce`, a standalone repository (no longer in the original's fork network). Links, install commands and manifests use the new name; GitHub redirects the old one.
+- The release workflow runs on any `v*` tag instead of the hard-coded `v0.2.0`.
+
 ## A note on the numbering below
 
 Entries from **3.6.0 and earlier describe the `task-spec` skill alone**, when it
@@ -25,7 +32,7 @@ the standalone repository.
 ## [0.3.0] — 2026-11-11
 
 First release of Pedro Zotelli's own line of this fork,
-https://github.com/PedroZotelli/convergeLuan, paired with Task-Spec 3.10.0 and
+https://github.com/PedroZotelli/convergeAlicerce, paired with Task-Spec 3.10.0 and
 Seamwise 0.3.0 from the sibling forks. Authorship of the original work stays with
 Luan Moreno Medeiros Maciel; see `NOTICE`. This release also carries the changes
 listed under Removed, which were unreleased upstream.

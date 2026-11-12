@@ -6,8 +6,8 @@
 
 **Coordinate intent, decomposition, task authority, execution, and settlement without duplicating authority.**
 
-[![ci](https://github.com/PedroZotelli/convergeLuan/actions/workflows/ci.yml/badge.svg)](https://github.com/PedroZotelli/convergeLuan/actions/workflows/ci.yml)
-[![release](https://img.shields.io/github/v/release/PedroZotelli/convergeLuan)](https://github.com/PedroZotelli/convergeLuan/releases)
+[![ci](https://github.com/PedroZotelli/convergeAlicerce/actions/workflows/ci.yml/badge.svg)](https://github.com/PedroZotelli/convergeAlicerce/actions/workflows/ci.yml)
+[![release](https://img.shields.io/github/v/release/PedroZotelli/convergeAlicerce)](https://github.com/PedroZotelli/convergeAlicerce/releases)
 [![bash 3.2+](https://img.shields.io/badge/bash-3.2%2B-4EAA25?logo=gnubash&logoColor=white)](#requirements)
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
@@ -40,7 +40,7 @@ full non-authority table is in [docs/concepts/authority.md](docs/concepts/author
 
 ## Why the skills exist
 
-The CLI is the referee. Skills exist so a chat agent finds the next pass without reading the whole method. The installer projects **exactly eleven** Converge skills to `.agents/skills/`, `.claude/skills/`, and `.grok/skills/`. Pass 5 Tasking is standalone [`taskspec`](https://github.com/PedroZotelli/task-specLuan), not a mirrored skill.
+The CLI is the referee. Skills exist so a chat agent finds the next pass without reading the whole method. The installer projects **exactly eleven** Converge skills to `.agents/skills/`, `.claude/skills/`, and `.grok/skills/`. Pass 5 Tasking is standalone [`taskspec`](https://github.com/PedroZotelli/task-specAlicerce), not a mirrored skill.
 
 <table>
 <tr>
@@ -87,7 +87,7 @@ The CLI is the referee. Skills exist so a chat agent finds the next pass without
 </tr>
 <tr>
   <td>5</td>
-  <td>standalone <a href="https://github.com/PedroZotelli/task-specLuan"><code>taskspec</code></a></td>
+  <td>standalone <a href="https://github.com/PedroZotelli/task-specAlicerce"><code>taskspec</code></a></td>
   <td>Turn accepted legs into atomic, vendor-neutral units with runnable evals</td>
   <td><strong>When</strong> accepted legs must become sealed Task-Specs.<br><strong>Not</strong> a Converge skill; use the standalone taskspec CLI. Converge does not install a mirrored Task-Spec skill.</td>
   <td><code>TIER=1</code></td>
@@ -291,27 +291,27 @@ Task-Spec pin is **3.10.0**, whose `rebuild-state` always writes repository-rela
 Install the published stack in dependency order:
 
 ```bash
-git clone --branch v3.10.0 https://github.com/PedroZotelli/task-specLuan.git
-bash task-specLuan/install.sh --global --copy
+git clone --branch v3.10.0 https://github.com/PedroZotelli/task-specAlicerce.git
+bash task-specAlicerce/install.sh --global --copy
 taskspec demo
 
-python3 -m pip install   "git+https://github.com/PedroZotelli/seamwiseLuan.git@v0.3.0"
+python3 -m pip install   "git+https://github.com/PedroZotelli/seamwiseAlicerce.git@v0.3.0"
 
-git clone --branch v0.3.0   https://github.com/PedroZotelli/convergeLuan.git
-bash convergeLuan/install.sh --target /absolute/path/to/your-project --copy
+git clone --branch v0.3.0   https://github.com/PedroZotelli/convergeAlicerce.git
+bash convergeAlicerce/install.sh --target /absolute/path/to/your-project --copy
 ```
 
 Converge also supports:
 
 ```bash
-npm install -g github:PedroZotelli/convergeLuan
+npm install -g github:PedroZotelli/convergeAlicerce
 cvg-install
 ```
 
 or:
 
 ```bash
-CVG_REF=v0.3.0   bash -c "$(curl -fsSL https://raw.githubusercontent.com/PedroZotelli/convergeLuan/main/install.sh)"
+CVG_REF=v0.3.0   bash -c "$(curl -fsSL https://raw.githubusercontent.com/PedroZotelli/convergeAlicerce/main/install.sh)"
 ```
 
 The installer projects exactly eleven Converge skills to `.agents/skills/`,

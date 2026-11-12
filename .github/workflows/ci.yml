@@ -52,7 +52,7 @@ jobs:
       - name: install the pinned standalone Task-Spec engine
         run: |
           engine_dir="$(mktemp -d -t task-spec-engine.XXXXXX)"
-          git clone --quiet https://github.com/PedroZotelli/task-specLuan.git "$engine_dir"
+          git clone --quiet https://github.com/PedroZotelli/task-specAlicerce.git "$engine_dir"
           git -C "$engine_dir" checkout --quiet --detach d5121f8c870448e3864eb7cb22160f0b720d7d36
           bash "$engine_dir/install.sh" --global --copy
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
@@ -82,10 +82,10 @@ jobs:
       - name: install the pinned standalone Seamwise engine
         run: |
           engine_dir="$(mktemp -d -t seamwise-engine.XXXXXX)"
-          git clone --quiet https://github.com/PedroZotelli/seamwiseLuan.git "$engine_dir"
+          git clone --quiet https://github.com/PedroZotelli/seamwiseAlicerce.git "$engine_dir"
           git -C "$engine_dir" checkout --quiet --detach 862a90ad38a37a250af2d96c0fc2c3c2f8149519
           python -m pip install --disable-pip-version-check "$engine_dir"
-          test "$(seamwise --version)" = "seamwise, version 0.2.0"
+          test "$(seamwise --version)" = "seamwise, version 0.3.0"
           {
             printf 'CVG_SEAMWISE_BIN=%s\n' "$(command -v seamwise)"
             printf 'CVG_SEAMWISE_SOURCE_ROOT=%s\n' "$engine_dir"
@@ -334,7 +334,7 @@ jobs:
       - name: install the pinned standalone Task-Spec engine
         run: |
           engine_dir="$(mktemp -d -t task-spec-engine.XXXXXX)"
-          git clone --quiet https://github.com/PedroZotelli/task-specLuan.git "$engine_dir"
+          git clone --quiet https://github.com/PedroZotelli/task-specAlicerce.git "$engine_dir"
           git -C "$engine_dir" checkout --quiet --detach d5121f8c870448e3864eb7cb22160f0b720d7d36
           bash "$engine_dir/install.sh" --global --copy
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
@@ -440,11 +440,11 @@ jobs:
         run: |
           taskspec_dir="$(mktemp -d -t task-spec-engine.XXXXXX)"
           seamwise_dir="$(mktemp -d -t seamwise-engine.XXXXXX)"
-          git clone --quiet https://github.com/PedroZotelli/task-specLuan.git "$taskspec_dir"
+          git clone --quiet https://github.com/PedroZotelli/task-specAlicerce.git "$taskspec_dir"
           git -C "$taskspec_dir" checkout --quiet --detach d5121f8c870448e3864eb7cb22160f0b720d7d36
           bash "$taskspec_dir/install.sh" --global --copy
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
-          git clone --quiet https://github.com/PedroZotelli/seamwiseLuan.git "$seamwise_dir"
+          git clone --quiet https://github.com/PedroZotelli/seamwiseAlicerce.git "$seamwise_dir"
           git -C "$seamwise_dir" checkout --quiet --detach 862a90ad38a37a250af2d96c0fc2c3c2f8149519
           python -m pip install --disable-pip-version-check "$seamwise_dir"
           {

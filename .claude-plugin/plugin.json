@@ -6,8 +6,8 @@
   "author": {
     "name": "Luan Moreno M. Maciel"
   },
-  "homepage": "https://github.com/PedroZotelli/convergeLuan",
-  "repository": "https://github.com/PedroZotelli/convergeLuan",
+  "homepage": "https://github.com/PedroZotelli/convergeAlicerce",
+  "repository": "https://github.com/PedroZotelli/convergeAlicerce",
   "license": "MIT",
   "keywords": ["agentic", "task-spec", "evals", "delivery", "referee", "claude-code"]
 }
