@@ -284,6 +284,9 @@ Task-Spec pin is **3.10.0**, whose `rebuild-state` always writes repository-rela
 - Git
 - Bash 3.2 or newer
 - Python 3
+- On Windows: Git for Windows (Converge runs its scripts with Git Bash, found by
+  full path, never WSL's `bash.exe`) and Python 3.10 or newer; no administrator
+  rights needed
 - Task-Spec 3.10.0 for every Converge installation
 - Seamwise 0.3.0 only for decomposition and `cvg compose`
 - Node 22 only for the npm door and Cockpit
@@ -316,7 +319,7 @@ CVG_REF=v0.3.0   bash -c "$(curl -fsSL https://raw.githubusercontent.com/PedroZo
 
 The installer projects exactly eleven Converge skills to `.agents/skills/`,
 `.claude/skills/`, and `.grok/skills/`. It installs no Task-Spec or Seamwise
-implementation. The repository is private; all install doors require access.
+implementation. The repository is public; no install door needs credentials.
 
 ## Release truth
 
@@ -325,6 +328,7 @@ at Converge 0.3.0 with Task-Spec 3.10.0 and Seamwise 0.3.0; see `CHANGELOG.md`.
 
 | Claim | Current evidence |
 |---|---|
+| Converge 0.3.0 (this line) | Tag `v0.3.0`; hosted CI green on Ubuntu at merge commit `c8a427e`; Windows 11 with Git Bash measured locally (29 of 29 `make check` commands). No GitHub release published yet |
 | Task-Spec 3.8.0 | Published from immutable commit `0e6180cfc3009bd4ef9cf7ab050b463e10d4af91`; hosted Ubuntu/macOS release installation green |
 | Seamwise 0.2.0 | Published from immutable commit `5a398169c3fefcb65eb1a47c0cb4f967dfdc0515`; exact-commit and packaged Ubuntu/macOS gates green |
 | Converge 0.2.0 | Release work merged through PRs #13–#15; `v0.2.0` identifies the immutable release commit |
@@ -342,7 +346,7 @@ at Converge 0.3.0 with Task-Spec 3.10.0 and Seamwise 0.3.0; see `CHANGELOG.md`.
 - **Manager fleet** — task scheduling across the frontier is a separate, still-future layer
 - **Autonomous approval** — Converge never merges, pushes, or opens a PR on the user branch unless a human asked
 
-## Scope of v0.2.0
+## Scope of v0.3.0
 
 This release promises a reproducible composed single-task path with strict
 external-engine boundaries. It does not promise Manager fleet scheduling,

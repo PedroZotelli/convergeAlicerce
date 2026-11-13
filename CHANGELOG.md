@@ -13,6 +13,10 @@ Task-Spec releases and schema/format versions deliberately do not.
 
 ## [Unreleased]
 
+### Documentation
+
+- README: the repository is public (the inherited text said private and that every install door needed access); Windows requirements (Git for Windows, Python 3.10+, no administrator rights); a release-truth row for this line (tag `v0.3.0`, hosted Ubuntu CI, Windows measured locally); "Scope of v0.3.0".
+
 ### Changed
 
 - The repository is now `PedroZotelli/convergeAlicerce`, a standalone repository (no longer in the original's fork network). Links, install commands and manifests use the new name; GitHub redirects the old one.
