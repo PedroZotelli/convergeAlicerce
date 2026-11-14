@@ -81,6 +81,7 @@ check-core:
 	bash tests/test-loop-kernel.sh
 	bash tests/test-codex-engine.sh
 	bash tests/test-version-unity.sh
+	bash tests/test-workflows.sh
 	bash skills/idea-to-brd/tests/run-tests.sh
 	bash skills/brd-docs-to-tech-req/tests/run-tests.sh
 	bash skills/tech-req-to-adrs/tests/run-tests.sh

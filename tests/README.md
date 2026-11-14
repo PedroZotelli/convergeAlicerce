@@ -21,4 +21,9 @@ exists but `.github/workflows/ci.yml` never invokes it — coverage on the tin i
 not coverage in the pipeline. `test-repo-layout.sh` fails if the top-level tree
 drifts from the contract the README documents.
 
+`test-workflows.sh` reads `.github/workflows/` without triggering anything: every
+action must be pinned to a full commit, a job that reads a repository file must
+check the repository out, and every value one job takes from another
+(`needs.<job>.outputs.<name>`) must be declared by the job that produces it.
+
 `fixtures/` holds inputs shared across suites; it contains no suites itself.

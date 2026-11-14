@@ -61,6 +61,8 @@ jobs:
     name: build release assets
     runs-on: ubuntu-latest
     needs: verify
+    outputs:
+      version: ${{ steps.version.outputs.version }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -69,10 +71,20 @@ jobs:
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: "22"
-      - name: Assemble stable assets
+      - name: Read the version once, for every later job
+        id: version
         run: |
-          version="$(cat VERSION)"
+          version="$(tr -d '[:space:]' < VERSION)"
+          case "$version" in
+            ""|*[!0-9A-Za-z.+-]*) echo "::error::VERSION is not a version: '$version'"; exit 1 ;;
+          esac
           if [[ "$GITHUB_REF_TYPE" = tag ]]; then test "$GITHUB_REF_NAME" = "v$version"; fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+      - name: Assemble stable assets
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          version="$VERSION"
           # A release ships only with its own retained evidence; without it, stop here.
           test -d "evidence/releases/v$version" || { echo "::error::no retained release evidence at evidence/releases/v$version"; exit 1; }
           mkdir -p dist release-assets
@@ -84,7 +96,7 @@ jobs:
             --source-commit "$GITHUB_SHA" \
             --source-ref "$GITHUB_REF_NAME" \
             --ci-run-url "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
-      - uses: actions/upload-artifact@v7
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: converge-release-assets
           path: release-assets/
@@ -98,16 +110,20 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/download-artifact@v8
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: converge-release-assets
           path: release-assets
       - name: Publish immutable release
         env:
           GH_TOKEN: ${{ github.token }}
+          # This job has no checkout: the version comes from the build job, not from a file.
+          VERSION: ${{ needs.build.outputs.version }}
         run: |
-          gh release create "v$(cat VERSION)" release-assets/* \
+          test -n "$VERSION" || { echo "::error::the build job did not report a version"; exit 1; }
+          test "$GITHUB_REF_NAME" = "v$VERSION" || { echo "::error::tag $GITHUB_REF_NAME is not v$VERSION"; exit 1; }
+          gh release create "v$VERSION" release-assets/* \
             --repo "$GITHUB_REPOSITORY" \
-            --title "Converge $(cat VERSION)" \
+            --title "Converge $VERSION" \
             --generate-notes \
             --verify-tag
