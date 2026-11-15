@@ -14,7 +14,7 @@ make check-core     # the gate, install, loop, and skill suites
 ```
 
 A green run needs the release pairing documented in the root README: Task-Spec
-3.10.0, Seamwise 0.3.0, and a Python with `jsonschema`.
+3.10.1, Seamwise 0.3.0, and a Python with `jsonschema`.
 
 Two suites police the others. `test-ci-covers-every-suite.sh` fails if a suite
 exists but `.github/workflows/ci.yml` never invokes it — coverage on the tin is

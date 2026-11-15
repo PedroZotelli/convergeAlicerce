@@ -13,6 +13,15 @@ Task-Spec releases and schema/format versions deliberately do not.
 
 ## [Unreleased]
 
+## [0.3.1] — 2026-11-15
+
+A patch release. The engine pin in `bin/cvg` is code the plugin ships, and Claude
+Code updates a plugin only when its version number changes.
+
+### Changed
+
+- **The Task-Spec pin is 3.10.1** (commit `07f0d54329b3bbe8bfbbd4fc05e67fdff4a91565`, tag `v3.10.1`), up from 3.10.0: `bin/cvg` (`CVG_TASKSPEC_REQUIRED`), CI, the release workflow, `scripts/bootstrap.sh`, the composed demo and its test, the release manifest, README, CONTRIBUTING, and the installation guide. 3.10.1 carries the holdout and Windows fixes of the engine. The accepted range is unchanged (3.8.x, and 3.10.0 up to 4.0.0; 3.9.x rejected).
+
 ### Fixed
 
 - **The release workflow could never publish.** The `publish` job ran `gh release create "v$(cat VERSION)"` without checking the repository out (it only downloads the built assets), so the first real tag would have passed `verify` and `build` and then failed with an empty version. The `build` job now reads `VERSION` once and hands it on as a job output; `publish` refuses to run with an empty version or a tag that does not match it. Not exercised by a real tag yet.
