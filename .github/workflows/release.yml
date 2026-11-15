@@ -41,7 +41,7 @@ jobs:
           taskspec_dir="$(mktemp -d -t task-spec-engine.XXXXXX)"
           seamwise_dir="$(mktemp -d -t seamwise-engine.XXXXXX)"
           git clone --quiet https://github.com/PedroZotelli/task-specAlicerce.git "$taskspec_dir"
-          git -C "$taskspec_dir" checkout --quiet --detach d5121f8c870448e3864eb7cb22160f0b720d7d36
+          git -C "$taskspec_dir" checkout --quiet --detach 07f0d54329b3bbe8bfbbd4fc05e67fdff4a91565
           bash "$taskspec_dir/install.sh" --global --copy
           git clone --quiet https://github.com/PedroZotelli/seamwiseAlicerce.git "$seamwise_dir"
           git -C "$seamwise_dir" checkout --quiet --detach 862a90ad38a37a250af2d96c0fc2c3c2f8149519

@@ -138,7 +138,7 @@ def main() -> int:
     for claim in (
         f"Converge {VERSION}",
         "Seamwise 0.3.0",
-        "Task-Spec 3.10.0",
+        "Task-Spec 3.10.1",
         "Hosted CI",
         "Historical Converge 0.1.0",
     ):

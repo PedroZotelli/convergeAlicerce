@@ -31,8 +31,8 @@ esac
 : "${PYTHONUTF8:=1}"
 export PYTHONUTF8
 
-CVG_VERSION="0.3.0"
-CVG_TASKSPEC_REQUIRED="3.10.0"
+CVG_VERSION="0.3.1"
+CVG_TASKSPEC_REQUIRED="3.10.1"
 
 # Resolve THIS script through any symlink chain before locating its companions.
 # Development installs may put a symlink on PATH, so `dirname "$0"` can be the

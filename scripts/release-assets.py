@@ -51,7 +51,7 @@ def main() -> int:
     parser.add_argument("--product-commit", default="")
     parser.add_argument("--evidence-commit", default="")
     parser.add_argument(
-        "--taskspec-commit", default="d5121f8c870448e3864eb7cb22160f0b720d7d36"
+        "--taskspec-commit", default="07f0d54329b3bbe8bfbbd4fc05e67fdff4a91565"
     )
     parser.add_argument(
         "--seamwise-commit", default="862a90ad38a37a250af2d96c0fc2c3c2f8149519"
@@ -88,7 +88,7 @@ def main() -> int:
     manifest = {
         "contract": "ConvergeReleaseManifest/v1",
         "product": "converge",
-        "version": "0.3.0",
+        "version": "0.3.1",
         "source": {
             "commit": args.source_commit,
             "ref": args.source_ref,
@@ -98,7 +98,7 @@ def main() -> int:
         "dependencies": [
             {
                 "product": "task-spec",
-                "version": "3.10.0",
+                "version": "3.10.1",
                 "commit": args.taskspec_commit,
             },
             {

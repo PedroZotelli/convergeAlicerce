@@ -143,9 +143,9 @@ jsonschema.validate(value, schema)
 assert value["contract"] == "ConvergeCompositionReceipt/v1"
 assert value["dispatch_authorized"] is False
 assert value["versions"] == {
-    "converge": "0.3.0",
+    "converge": "0.3.1",
     "seamwise": "0.3.0",
-    "task_spec": "3.10.0",
+    "task_spec": "3.10.1",
 }
 assert [item["task_id"] for item in value["tasks"]] == ["T-20260815-health-status"]
 assert len(value["source"]["commit"]) == 40
