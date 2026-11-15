@@ -11,7 +11,7 @@
 [![bash 3.2+](https://img.shields.io/badge/bash-3.2%2B-4EAA25?logo=gnubash&logoColor=white)](#requirements)
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-Converge 0.3.1 | cvg 0.3.1 | Seamwise 0.3.0 | Task-Spec 3.10.1
+Converge 0.3.2 | cvg 0.3.2 | Seamwise 0.3.0 | Task-Spec 3.11.0
 
 [Owns](#what-converge-owns) · [Skills](#why-the-skills-exist) · [Descent](#descent) · [Chat](#chat-experience) · [CLI](#cli) · [Install](#install) · [Docs](#documentation)
 
@@ -186,7 +186,7 @@ Pass 5 has no Converge pass-prompt — it uses the standalone Task-Spec CLI dire
 
 No Cursor dest exists in `install.sh`.
 
-**Claude Code plugin.** Claude Code can also load `.claude-plugin/` (`plugin.json` + `marketplace.json`): eleven owned skills + `cvg`; Task-Spec independently installed at 3.10.x. `claude plugin validate .` passes on Claude Code 2.1.325 (warnings only: no icon, and the root `CLAUDE.md` is not shipped as plugin context); 2.1.85 rejects the `displayName` and marketplace `description` keys that newer versions accept.
+**Claude Code plugin.** Claude Code can also load `.claude-plugin/` (`plugin.json` + `marketplace.json`): eleven owned skills + `cvg`; Task-Spec independently installed at 3.11.x. `claude plugin validate .` passes on Claude Code 2.1.325 (warnings only: no icon, and the root `CLAUDE.md` is not shipped as plugin context); 2.1.85 rejects the `displayName` and marketplace `description` keys that newer versions accept.
 
 **Router scaffold.** `cvg setup harness` scaffolds `AGENTS.md` (~50 lines, routing only, non-clobbering). Bind (Pass 7B) emits `AGENTS.task.md` (identifiers, not content).
 
@@ -275,7 +275,7 @@ cvg compose --json status
 
 `--json` emits one `ConvergeCLIResult/v1` document. The canonical 60-form matrix is [contracts/cli-command-matrix.json](contracts/cli-command-matrix.json); the human reference is [docs/reference/cli.md](docs/reference/cli.md).
 
-Task-Spec pin is **3.10.1**. Since 3.10.0, `rebuild-state` always writes repository-relative paths; 3.9.x writes an absolute `path:` into `_state.yaml` and is rejected.
+Task-Spec pin is **3.11.0**. Since 3.10.0, `rebuild-state` always writes repository-relative paths; 3.9.x writes an absolute `path:` into `_state.yaml` and is rejected.
 
 ## Install
 
@@ -287,20 +287,20 @@ Task-Spec pin is **3.10.1**. Since 3.10.0, `rebuild-state` always writes reposit
 - On Windows: Git for Windows (Converge runs its scripts with Git Bash, found by
   full path, never WSL's `bash.exe`) and Python 3.10 or newer; no administrator
   rights needed
-- Task-Spec 3.10.1 for every Converge installation
+- Task-Spec 3.11.0 for every Converge installation
 - Seamwise 0.3.0 only for decomposition and `cvg compose`
 - Node 22 only for the npm door and Cockpit
 
 Install the published stack in dependency order:
 
 ```bash
-git clone --branch v3.10.1 https://github.com/PedroZotelli/task-specAlicerce.git
+git clone --branch v3.11.0 https://github.com/PedroZotelli/task-specAlicerce.git
 bash task-specAlicerce/install.sh --global --copy
 taskspec demo
 
 python3 -m pip install   "git+https://github.com/PedroZotelli/seamwiseAlicerce.git@v0.3.0"
 
-git clone --branch v0.3.1   https://github.com/PedroZotelli/convergeAlicerce.git
+git clone --branch v0.3.2   https://github.com/PedroZotelli/convergeAlicerce.git
 bash convergeAlicerce/install.sh --target /absolute/path/to/your-project --copy
 ```
 
@@ -314,7 +314,7 @@ cvg-install
 or:
 
 ```bash
-CVG_REF=v0.3.1   bash -c "$(curl -fsSL https://raw.githubusercontent.com/PedroZotelli/convergeAlicerce/main/install.sh)"
+CVG_REF=v0.3.2   bash -c "$(curl -fsSL https://raw.githubusercontent.com/PedroZotelli/convergeAlicerce/main/install.sh)"
 ```
 
 The installer projects exactly eleven Converge skills to `.agents/skills/`,
@@ -324,12 +324,12 @@ implementation. The repository is public; no install door needs credentials.
 ## Release truth
 
 This repository's own line started at Converge 0.3.0 with Task-Spec 3.10.0 and
-Seamwise 0.3.0. It is now at Converge 0.3.1 with Task-Spec 3.10.1; see `CHANGELOG.md`.
+Seamwise 0.3.0. It is now at Converge 0.3.2 with Task-Spec 3.11.0; see `CHANGELOG.md`.
 
 | Claim (this line) | Current evidence |
 |---|---|
-| Converge 0.3.1 | Not tagged yet (the last tag is `v0.3.0`). Windows 11 with Git Bash measured locally (every `make check` command exits 0, with the Task-Spec 3.10.1 engine); hosted CI runs on Ubuntu. No GitHub release published yet |
-| Task-Spec 3.10.1 | Pinned at commit `07f0d54329b3bbe8bfbbd4fc05e67fdff4a91565` (tag `v3.10.1`); `bin/cvg` and `install.sh` accept 3.8.x and 3.10.0 up to (not including) 4.0.0, and reject 3.9.x. `tests/test-version-unity.sh` additionally requires a 3.10.x engine, so a later minor (3.11) needs its own pin change |
+| Converge 0.3.2 | Not tagged yet (the last tag is `v0.3.1`). Windows 11 with Git Bash measured locally (every `make check` command exits 0, with the Task-Spec 3.11.0 engine); hosted CI runs on Ubuntu. No GitHub release published: the release workflow stops because `evidence/releases/v<version>` does not exist for this line (observed with the `v0.3.1` tag) |
+| Task-Spec 3.11.0 | Pinned at commit `c7973304a3ab1cf952ca3843f6db4db29f245c30` (tag `v3.11.0`); `bin/cvg` and `install.sh` accept 3.8.x and 3.10.0 up to (not including) 4.0.0, and reject 3.9.x. `tests/test-version-unity.sh` additionally requires an engine of the pinned minor (3.11.x), so each later minor needs its own pin change. 3.11.0 changed the holdout receipt contract; the composed flow does not use Task-Spec holdout receipts (it calls `taskspec accept --handoff … --stamp`), so nothing else changed here |
 | Seamwise 0.3.0 | Pinned at commit `862a90ad38a37a250af2d96c0fc2c3c2f8149519` |
 | Hosted CI | `ci.yml` runs on Ubuntu on every push and pull request; macOS runs only in the release gate |
 | Release publication | Not exercised yet on this line. `release.yml` runs on any `v*` tag: it verifies Ubuntu and macOS, refuses to build without `evidence/releases/v<version>`, and publishes with the version handed over by the build job. `tests/test-workflows.sh` checks that hand-over statically |
@@ -411,7 +411,7 @@ make release-check
 
 A green local `make check` needs the release pairing:
 
-- Task-Spec **3.10.1** at commit `07f0d54329b3bbe8bfbbd4fc05e67fdff4a91565`
+- Task-Spec **3.11.0** at commit `c7973304a3ab1cf952ca3843f6db4db29f245c30`
 - Seamwise **0.3.0** at commit `862a90ad38a37a250af2d96c0fc2c3c2f8149519`
 
 ## Contributing

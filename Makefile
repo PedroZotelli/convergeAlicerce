@@ -50,7 +50,7 @@ export CVG_SEAMWISE_BIN := $(SEAMWISE_BIN)
 export PYTHONDONTWRITEBYTECODE := 1
 
 # Some cvg subcommands re-enter the CLI (`cvg snapshot` shells out to `cvg next`)
-# and resolve the engine through PATH rather than CVG_TASKSPEC_BIN. With the 3.10.x
+# and resolve the engine through PATH rather than CVG_TASKSPEC_BIN. With the 3.11.x
 # pin in bin/cvg, a 3.9.x on PATH is rejected there and the failure surfaces as an
 # unrelated snapshot error. CI avoids this by putting the pinned engine on PATH
 # ($GITHUB_PATH); this does the same locally so a bootstrapped run matches CI.

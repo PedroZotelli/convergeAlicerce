@@ -9,8 +9,8 @@
     {
       "name": "converge",
       "source": "./",
-      "description": "The nine-pass Converge method (eleven owned skills) plus the cvg referee CLI on PATH. Requires the independently installed Task-Spec 3.10 engine.",
-      "version": "0.3.1",
+      "description": "The nine-pass Converge method (eleven owned skills) plus the cvg referee CLI on PATH. Requires the independently installed Task-Spec 3.11 engine.",
+      "version": "0.3.2",
       "license": "MIT",
       "category": "workflow",
       "keywords": ["agentic", "task-spec", "evals", "delivery", "referee"]

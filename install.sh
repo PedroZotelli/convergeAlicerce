@@ -128,7 +128,7 @@ TARGET="$(cd "$TARGET" && pwd)"
 # the consuming repository.
 TASKSPEC_BIN="${CVG_TASKSPEC_BIN:-$(command -v taskspec 2>/dev/null || true)}"
 [ -n "$TASKSPEC_BIN" ] || {
-  echo "ERROR: Task-Spec engine is required. Install taskspec 3.10.x first:" >&2
+  echo "ERROR: Task-Spec engine is required. Install taskspec 3.11.x first:" >&2
   echo "  git clone https://github.com/PedroZotelli/task-specAlicerce.git" >&2
   echo "  bash task-specAlicerce/install.sh --global --copy" >&2
   exit 2
@@ -136,7 +136,7 @@ TASKSPEC_BIN="${CVG_TASKSPEC_BIN:-$(command -v taskspec 2>/dev/null || true)}"
 TASKSPEC_VERSION="$("$TASKSPEC_BIN" version 2>/dev/null | tail -1 | tr -d '[:space:]')"
 case "$TASKSPEC_VERSION" in
   3.8.*|3.[1-9][0-9].*) ;;
-  3.9.*) echo "ERROR: taskspec 3.9.x writes an absolute path: into _state.yaml; install 3.10.x (found '$TASKSPEC_VERSION')" >&2; exit 2 ;;
+  3.9.*) echo "ERROR: taskspec 3.9.x writes an absolute path: into _state.yaml; install 3.11.x (found '$TASKSPEC_VERSION')" >&2; exit 2 ;;
   *) echo "ERROR: Converge 0.3 requires taskspec 3.8.x or >=3.10.0 and <4.0.0 (found '$TASKSPEC_VERSION')" >&2; exit 2 ;;
 esac
 

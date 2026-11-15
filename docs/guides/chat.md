@@ -95,7 +95,7 @@ Claude Code can also load `.claude-plugin/` (`plugin.json` + `marketplace.json`)
 
 - Eleven owned Converge skills
 - The `cvg` CLI
-- Task-Spec independently installed at 3.10.x (3.8.x still works; 3.9.x is rejected)
+- Task-Spec independently installed at 3.11.x (3.8.x and 3.10.x still work; 3.9.x is rejected)
 
 ## Setup harness
 

@@ -16,7 +16,7 @@ engines and pins them to exact commits:
 
 | Engine | Version | Commit |
 |---|---|---|
-| Task-Spec | 3.10.1 | `07f0d54329b3bbe8bfbbd4fc05e67fdff4a91565` |
+| Task-Spec | 3.11.0 | `c7973304a3ab1cf952ca3843f6db4db29f245c30` |
 | Seamwise | 0.3.0 | `862a90ad38a37a250af2d96c0fc2c3c2f8149519` |
 
 Task-Spec 3.9.x is **rejected on purpose**: its `rebuild-state` writes an
