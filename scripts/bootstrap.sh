@@ -3,7 +3,7 @@
 #
 # WHY THIS EXISTS
 # A green run needs three things that are not on a normal developer's PATH: the
-# exact Task-Spec 3.10.1 commit (3.9.x writes absolute _state.yaml paths and is
+# exact Task-Spec 3.11.0 commit (3.9.x writes absolute _state.yaml paths and is
 # rejected), the exact Seamwise 0.3.0 commit, and a Python that can import
 # jsonschema. Before this script those were three README paragraphs, so the
 # honest onboarding cost was "read carefully, then assemble it yourself."
@@ -23,8 +23,8 @@ cd "$REPO" || { echo "cannot enter repo"; echo "BOOTSTRAP=FAIL"; exit 1; }
 
 # The release pairing. These are the same commits .github/workflows/ci.yml pins.
 TASKSPEC_REPO="https://github.com/PedroZotelli/task-specAlicerce.git"
-TASKSPEC_COMMIT="07f0d54329b3bbe8bfbbd4fc05e67fdff4a91565"
-TASKSPEC_VERSION="3.10.1"
+TASKSPEC_COMMIT="c7973304a3ab1cf952ca3843f6db4db29f245c30"
+TASKSPEC_VERSION="3.11.0"
 SEAMWISE_REPO="https://github.com/PedroZotelli/seamwiseAlicerce.git"
 SEAMWISE_COMMIT="862a90ad38a37a250af2d96c0fc2c3c2f8149519"
 SEAMWISE_VERSION="0.3.0"

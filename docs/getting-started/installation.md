@@ -1,6 +1,6 @@
 # Installation
 
-Converge 0.3.1 requires Task-Spec **3.10.x** (3.8.x still works) for every install. Seamwise **0.3.x**
+Converge 0.3.2 requires Task-Spec **3.11.x** (3.8.x and 3.10.x still work) for every install. Seamwise **0.3.x**
 is required only for `cvg decompose` and `cvg compose`. Node 22 is required only
 for the npm door and Cockpit.
 
@@ -12,7 +12,7 @@ Seamwise implementation into the consumer.
 - Git
 - Bash 3.2 or newer
 - Python 3
-- Task-Spec 3.10.1 (`07f0d54329b3bbe8bfbbd4fc05e67fdff4a91565`)
+- Task-Spec 3.11.0 (`c7973304a3ab1cf952ca3843f6db4db29f245c30`)
 - Seamwise 0.3.0 (`862a90ad38a37a250af2d96c0fc2c3c2f8149519`) for compose
 - Node 22 only for npm / Cockpit
 
@@ -22,14 +22,14 @@ Task-Spec 3.9.x is rejected on purpose: `rebuild-state` writes an absolute
 ## Install in dependency order
 
 ```bash
-git clone --branch v3.10.1 https://github.com/PedroZotelli/task-specAlicerce.git
+git clone --branch v3.11.0 https://github.com/PedroZotelli/task-specAlicerce.git
 bash task-specAlicerce/install.sh --global --copy
 taskspec demo
 
 python3 -m pip install \
   "git+https://github.com/PedroZotelli/seamwiseAlicerce.git@v0.3.0"
 
-git clone --branch v0.3.1 https://github.com/PedroZotelli/convergeAlicerce.git
+git clone --branch v0.3.2 https://github.com/PedroZotelli/convergeAlicerce.git
 bash convergeAlicerce/install.sh --target /absolute/path/to/your-project --copy
 ```
 
@@ -41,7 +41,7 @@ cvg-install
 ```
 
 ```bash
-CVG_REF=v0.3.1 bash -c "$(curl -fsSL \
+CVG_REF=v0.3.2 bash -c "$(curl -fsSL \
   https://raw.githubusercontent.com/PedroZotelli/convergeAlicerce/main/install.sh)"
 ```
 

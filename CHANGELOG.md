@@ -13,6 +13,15 @@ Task-Spec releases and schema/format versions deliberately do not.
 
 ## [Unreleased]
 
+## [0.3.2] — 2026-11-15
+
+A patch release: the engine pin in `bin/cvg` is code the plugin ships.
+
+### Changed
+
+- **The Task-Spec pin is 3.11.0** (commit `c7973304a3ab1cf952ca3843f6db4db29f245c30`, tag `v3.11.0`), up from 3.10.1: `bin/cvg` (`CVG_TASKSPEC_REQUIRED`), CI, the release workflow, `scripts/bootstrap.sh`, the composed demo and its test, the release manifest, README, CONTRIBUTING, and the installation guide. `tests/test-version-unity.sh` now requires an engine of the pinned minor (3.11.x); with the suite as it was, a 3.11.0 engine failed it. The accepted range at run time is unchanged (3.8.x, and 3.10.0 up to 4.0.0; 3.9.x rejected).
+- **Nothing in the composed flow had to change for the 3.11.0 holdout receipt.** Task-Spec 3.11.0 makes an `EvaluationReceipt/v2` name its bundle (`bundle_digest`) and makes acceptance compare it. Converge never produces or consumes those receipts: the loop calls `taskspec accept --handoff … --stamp` with no `--holdout-receipt`, the specs it generates are format 3 (no `evaluation_policy`), and Converge's own "holdout" is the `## Holdout` section read by the tier-2 judge, a different mechanism. The clean-room, composed, and loop suites pass unchanged on the 3.11.0 engine. A task authored by hand with a format-4 holdout policy needs receipts written by Task-Spec 3.11.0 or later.
+
 ## [0.3.1] — 2026-11-15
 
 A patch release. The engine pin in `bin/cvg` is code the plugin ships, and Claude

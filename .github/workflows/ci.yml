@@ -55,7 +55,7 @@ jobs:
         run: |
           engine_dir="$(mktemp -d -t task-spec-engine.XXXXXX)"
           git clone --quiet https://github.com/PedroZotelli/task-specAlicerce.git "$engine_dir"
-          git -C "$engine_dir" checkout --quiet --detach 07f0d54329b3bbe8bfbbd4fc05e67fdff4a91565
+          git -C "$engine_dir" checkout --quiet --detach c7973304a3ab1cf952ca3843f6db4db29f245c30
           bash "$engine_dir/install.sh" --global --copy
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
           {
@@ -168,7 +168,7 @@ jobs:
 
       - name: standalone Task-Spec boundary
         run: |
-          test "$(taskspec version)" = "3.10.1"
+          test "$(taskspec version)" = "3.11.0"
           taskspec demo | tee /tmp/taskspec-demo.txt
           grep -q '^DEMO=READY$' /tmp/taskspec-demo.txt
 
@@ -342,7 +342,7 @@ jobs:
         run: |
           engine_dir="$(mktemp -d -t task-spec-engine.XXXXXX)"
           git clone --quiet https://github.com/PedroZotelli/task-specAlicerce.git "$engine_dir"
-          git -C "$engine_dir" checkout --quiet --detach 07f0d54329b3bbe8bfbbd4fc05e67fdff4a91565
+          git -C "$engine_dir" checkout --quiet --detach c7973304a3ab1cf952ca3843f6db4db29f245c30
           bash "$engine_dir/install.sh" --global --copy
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
 
@@ -448,7 +448,7 @@ jobs:
           taskspec_dir="$(mktemp -d -t task-spec-engine.XXXXXX)"
           seamwise_dir="$(mktemp -d -t seamwise-engine.XXXXXX)"
           git clone --quiet https://github.com/PedroZotelli/task-specAlicerce.git "$taskspec_dir"
-          git -C "$taskspec_dir" checkout --quiet --detach 07f0d54329b3bbe8bfbbd4fc05e67fdff4a91565
+          git -C "$taskspec_dir" checkout --quiet --detach c7973304a3ab1cf952ca3843f6db4db29f245c30
           bash "$taskspec_dir/install.sh" --global --copy
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
           git clone --quiet https://github.com/PedroZotelli/seamwiseAlicerce.git "$seamwise_dir"
