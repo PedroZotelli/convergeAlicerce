@@ -13,7 +13,21 @@ Task-Spec releases and schema/format versions deliberately do not.
 
 ## [Unreleased]
 
+### Fixed
+
+- **The release workflow could never publish.** The `publish` job ran `gh release create "v$(cat VERSION)"` without checking the repository out (it only downloads the built assets), so the first real tag would have passed `verify` and `build` and then failed with an empty version. The `build` job now reads `VERSION` once and hands it on as a job output; `publish` refuses to run with an empty version or a tag that does not match it. Not exercised by a real tag yet.
+- `release.yml` called `actions/upload-artifact` and `actions/download-artifact` by a moving tag (`@v7`, `@v8`). They are pinned to the commits those tags pointed to (v7.0.2, v8.0.2), like every other action here.
+
+### Added
+
+- `tests/test-workflows.sh` (in `make check` and CI): every action pinned to a full commit, no job reading a repository file without a checkout, and every `needs.<job>.outputs.<name>` declared by the producing job. It fails on the workflow as it was (4 findings).
+
 ### Documentation
+
+- README "Release truth" separates this line's claims from the history inherited from the original project (Task-Spec 3.8.0, Seamwise 0.2.0 and the `v0.2.0` release workflow were listed as current evidence), and states that release publication has not been exercised here.
+- Task-Spec 3.10.1 (patch) is recorded as passing the engine version gate; the CI pin stays at the 3.10.0 commit until the 3.10.1 tag exists.
+- The Claude Code plugin notes said Task-Spec 3.8; they say 3.10.x. Recorded which Claude Code version validates the manifests (2.1.325 passes with warnings; 2.1.85 rejects two keys newer versions accept). No manifest change was needed.
+- `ci.yml` said "both must pass" about macOS and Linux while the matrix runs Ubuntu only; the comment now says what is proven by a hosted run.
 
 - README: the repository is public (the inherited text said private and that every install door needed access); Windows requirements (Git for Windows, Python 3.10+, no administrator rights); a release-truth row for this line (tag `v0.3.0`, hosted Ubuntu CI, Windows measured locally); "Scope of v0.3.0".
 

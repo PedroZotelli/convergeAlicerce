@@ -31,9 +31,11 @@ jobs:
       # users. In CI, missing schema or cross-engine proof is a hard failure.
       TASK_SPEC_REQUIRE_JSONSCHEMA: "1"
       TASK_SPEC_STRICT_CROSS_ENGINE: "1"
-    # macOS ships bash 3.2 and BSD userland; Linux ships bash 5 and GNU. The
-    # core is written for the older, stricter of the two, so both must pass or
-    # the portability claim is decoration.
+    # This workflow runs on Ubuntu only. macOS (bash 3.2, BSD userland) is
+    # exercised by the release gate in release.yml, on every `v*` tag; Windows
+    # is measured locally (see "Release truth" in the README). The core is
+    # written for the older, stricter bash, but only the systems named here are
+    # proven by a hosted run.
     strategy:
       fail-fast: false
       matrix:
@@ -255,6 +257,11 @@ jobs:
 
       - name: one package, one version
         run: bash tests/test-version-unity.sh
+
+      - name: workflows — pinned actions, versions that reach every job
+        # Static: no workflow is triggered. The publish job once read VERSION
+        # without a checkout, a defect that only a real tag would have shown.
+        run: bash tests/test-workflows.sh
 
       - name: pass gates (0-4 · the design half)
         # Every pass gate that HAS a suite runs here. Pass 3 and Pass 4 owned

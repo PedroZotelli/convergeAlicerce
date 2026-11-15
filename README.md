@@ -186,7 +186,7 @@ Pass 5 has no Converge pass-prompt — it uses the standalone Task-Spec CLI dire
 
 No Cursor dest exists in `install.sh`.
 
-**Claude Code plugin.** Claude Code can also load `.claude-plugin/` (`plugin.json` + `marketplace.json`): eleven owned skills + `cvg`; Task-Spec independently installed at 3.8.
+**Claude Code plugin.** Claude Code can also load `.claude-plugin/` (`plugin.json` + `marketplace.json`): eleven owned skills + `cvg`; Task-Spec independently installed at 3.10.x. `claude plugin validate .` passes on Claude Code 2.1.325 (warnings only: no icon, and the root `CLAUDE.md` is not shipped as plugin context); 2.1.85 rejects the `displayName` and marketplace `description` keys that newer versions accept.
 
 **Router scaffold.** `cvg setup harness` scaffolds `AGENTS.md` (~50 lines, routing only, non-clobbering). Bind (Pass 7B) emits `AGENTS.task.md` (identifiers, not content).
 
@@ -323,17 +323,26 @@ implementation. The repository is public; no install door needs credentials.
 
 ## Release truth
 
-The rows below record the original project's releases. This fork's own line starts
-at Converge 0.3.0 with Task-Spec 3.10.0 and Seamwise 0.3.0; see `CHANGELOG.md`.
+This repository's own line starts at Converge 0.3.0 with Task-Spec 3.10.0 and
+Seamwise 0.3.0; see `CHANGELOG.md`.
 
-| Claim | Current evidence |
+| Claim (this line) | Current evidence |
 |---|---|
-| Converge 0.3.0 (this line) | Tag `v0.3.0`; hosted CI green on Ubuntu at merge commit `c8a427e`; Windows 11 with Git Bash measured locally (29 of 29 `make check` commands). No GitHub release published yet |
+| Converge 0.3.0 | Tag `v0.3.0`; hosted CI green on Ubuntu at merge commit `c8a427e`; Windows 11 with Git Bash measured locally (every `make check` command exits 0). No GitHub release published yet |
+| Task-Spec 3.10.0 | Pinned at commit `d5121f8c870448e3864eb7cb22160f0b720d7d36`; `bin/cvg` and `install.sh` accept 3.8.x and 3.10.0 up to (not including) 4.0.0, and reject 3.9.x. Task-Spec 3.10.1 (a patch, not tagged yet) passes that gate: `tests/test-version-unity.sh` run with a 3.10.1 engine. The pin moves to 3.10.1 once its tag exists |
+| Seamwise 0.3.0 | Pinned at commit `862a90ad38a37a250af2d96c0fc2c3c2f8149519` |
+| Hosted CI | `ci.yml` runs on Ubuntu on every push and pull request; macOS runs only in the release gate |
+| Release publication | Not exercised yet on this line. `release.yml` runs on any `v*` tag: it verifies Ubuntu and macOS, refuses to build without `evidence/releases/v<version>`, and publishes with the version handed over by the build job. `tests/test-workflows.sh` checks that hand-over statically |
+
+The rows below are history inherited from the original project. They describe its
+releases, not this repository's, and are kept as lineage.
+
+| Claim (original project) | Evidence recorded at the time |
+|---|---|
 | Task-Spec 3.8.0 | Published from immutable commit `0e6180cfc3009bd4ef9cf7ab050b463e10d4af91`; hosted Ubuntu/macOS release installation green |
 | Seamwise 0.2.0 | Published from immutable commit `5a398169c3fefcb65eb1a47c0cb4f967dfdc0515`; exact-commit and packaged Ubuntu/macOS gates green |
-| Converge 0.2.0 | Release work merged through PRs #13–#15; `v0.2.0` identifies the immutable release commit |
+| Converge 0.2.0 | Release work merged through PRs #13–#15; `v0.2.0` identified the immutable release commit, and its tag workflow verified Ubuntu/macOS, built checksummed assets, and published the GitHub release |
 | Hosted CI | All eight jobs passed on exact feature SHA `1fa054546b5678838af21969816b94f8dab4ed1b` in run `32048296517` |
-| Release publication | The `v0.2.0` tag workflow independently verifies Ubuntu/macOS, builds checksummed assets, and publishes the GitHub release |
 | Historical Converge 0.1.0 | Published and immutable; it documents the former bundled Task-Spec architecture |
 
 ## Who this is for
